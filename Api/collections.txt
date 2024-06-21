@@ -1,0 +1,46 @@
+Users
+{
+  "_id": ObjectId("..."),
+  "nom": "John Doe",
+  "email": "john.doe@example.com",
+  "mot_de_passe": "hashed_password",
+  "telephone": "123-456-7890",
+  "autres_informations": "Additional info"
+}
+
+Rooms (salles)
+
+{
+  "_id": ObjectId("..."),  
+  "nom_salle": "Grande Salle",
+  "capacite_maximale": 500,
+  "description": "Une grande salle de spectacle avec des sièges confortables.",
+  "equipements": ["projecteur", "sonorisation", "éclairage"],
+  "disponibilites": [
+    {
+      "date": "2024-06-21",
+      "heures": ["18:00", "20:00", "22:00"]
+    }
+  ]
+}
+
+Shows(spectacle)
+{
+  "_id": ObjectId("..."),    
+  "nom_spectacle": "Concert de Rock",
+  "description": "Un concert de rock avec des groupes locaux.",
+  "duree_estimee": 120,          // Durée en minutes
+  "date_heure_spectacle": ISODate("2024-07-01T20:00:00Z"),
+  "id_salle_reservee": ObjectId("..."),
+  "id_organisateur": ObjectId("...")     // Référence à l'identifiant de l'organisateur (utilisateur)
+}
+
+reservations
+{
+  "_id": ObjectId("..."),    
+  "id_spectacle_prevu": ObjectId("..."),
+  "id_salle_reservee": ObjectId("..."),
+  "date_heure_reservation": ISODate("2024-07-01T20:00:00Z"),
+  "etat_reservation": "confirmée" // État de la réservation (confirmée, en attente, annulée, etc.)
+}
+
