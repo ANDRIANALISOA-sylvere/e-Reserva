@@ -34,9 +34,9 @@ Shows(spectacle)
 reservations
 {
   "_id": ObjectId("..."),    
-  "id_spectacle_prevu": ObjectId("..."),
   "id_salle_reservee": ObjectId("..."),
   "date_heure_reservation": ISODate("2024-07-01T20:00:00Z"),
+  heure_fin:
   "etat_reservation": "confirmée" // État de la réservation (confirmée, en attente, annulée, etc.)
 }
 
