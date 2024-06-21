@@ -5,13 +5,13 @@ Users
   "email": "john.doe@example.com",
   "mot_de_passe": "hashed_password",
   "telephone": "123-456-7890",
-  "autres_informations": "Additional info"
+  "role": "proprietaire"  // Ou "organisateur"
 }
 
 Rooms (salles)
 
 {
-  "_id": ObjectId("..."),  
+  "_id": ObjectId("..."),
   "nom_salle": "Grande Salle",
   "capacite_maximale": 500,
   "description": "Une grande salle de spectacle avec des sièges confortables.",
@@ -21,7 +21,8 @@ Rooms (salles)
       "date": "2024-06-21",
       "heures": ["18:00", "20:00", "22:00"]
     }
-  ]
+  ],
+  "id_proprietaire": ObjectId("...")
 }
 
 Shows(spectacle)
