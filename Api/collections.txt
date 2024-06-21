@@ -15,14 +15,9 @@ Rooms (salles)
   "nom_salle": "Grande Salle",
   "capacite_maximale": 500,
   "description": "Une grande salle de spectacle avec des sièges confortables.",
-  "equipements": ["projecteur", "sonorisation", "éclairage"],
-  "disponibilites": [
-    {
-      "date": "2024-06-21",
-      "heures": ["18:00", "20:00", "22:00"]
-    }
-  ],
-  "id_proprietaire": ObjectId("...")
+  "equipements": ["projecteur", "sonorisation", "éclairage","..."],
+  "id_proprietaire": ObjectId("..."),
+  images:[""]
 }
 
 Shows(spectacle)
