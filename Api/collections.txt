@@ -40,3 +40,5 @@ reservations
   "etat_reservation": "confirmée" // État de la réservation (confirmée, en attente, annulée, etc.)
 }
 
+Review
+
