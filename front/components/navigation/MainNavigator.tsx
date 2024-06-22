@@ -18,6 +18,7 @@ export default function MainNavigator() {
       screenOptions={{
         tabBarActiveTintColor: "#FF835C",
         tabBarInactiveTintColor: iconColor,
+        tabBarStyle: { paddingVertical: 5 },
       }}
     >
       <Tab.Screen

@@ -6,7 +6,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 interface Room {
   _id: string;
   name: string;
-  owner_id: string;
+  owner_id: {
+    name : string
+  };
   max_capacity: number;
   description: string;
   equipments: string[];
@@ -42,7 +44,7 @@ const ListRoom: React.FC = () => {
               onError={() => console.log("Image load error")}
             />
             <Text style={styles.name}>{room.name}</Text>
-            <Text style={styles.owner}>Owner: {room.owner_id}</Text>
+            <Text style={styles.owner}>Responsable: {room.owner_id.name}</Text>
             <Text style={styles.capacity}>Capacité: {room.max_capacity} personnes</Text>
           </TouchableOpacity>
         ))}

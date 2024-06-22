@@ -45,13 +45,14 @@ const GetRoomByOwner = async (req, res) => {
 
 const GetAllRoom = async (req, res) => {
   try {
-    const rooms = await Room.find({});
+    const rooms = await Room.find({}).populate('owner_id');
     res.status(200).json({ rooms });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "An error occurred while fetching rooms" });
   }
 };
+
 
 const GetRoomById = async (req, res) => {
   const id = req.params.id;
