@@ -10,6 +10,9 @@ import {
   Divider,
 } from "@ui-kitten/components";
 import Icon from "react-native-vector-icons/FontAwesome";
+import ListRoom from "./Tab/ListRoom";
+import PopularRoom from "./Tab/PopularRoom";
+import RecentRoom from "./Tab/RecentRoom";
 
 interface TabTitleProps {
   title: string;
@@ -39,15 +42,11 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   );
 
   const Star = (props: any) => (
-    <Icon name="star" size={20} color={iconColor} {...props} />
-  );
-
-  const Award = (props: any) => (
-    <Icon name="trophy" size={20} color={iconColor} {...props} />
+    <Icon name="star-o" size={20} color={iconColor} {...props} />
   );
 
   const New = (props: any) => (
-    <Icon name="plus-circle" size={20} color={iconColor} {...props} />
+    <Icon name="clock-o" size={20} color={iconColor} {...props} />
   );
 
   const handleTabSelect = (index: number) => {
@@ -92,7 +91,7 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text category="h6">Bonjour, Joséphin</Text>
-        <Icon name="bell" size={24} style={styles.icon} color={iconColor} />
+        <Icon name="bell-o" size={24} style={styles.icon} color={iconColor} />
       </View>
       <View style={styles.searchContainer}>
         <Input
@@ -118,22 +117,18 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           onMouseLeave={() => handleTabHover(-1)}
         />
         <Tab
-          title={() => <TabTitle title="Top Noté" icon={Award} index={2} />}
-          onMouseEnter={() => handleTabHover(2)}
-          onMouseLeave={() => handleTabHover(-1)}
-        />
-        <Tab
-          title={() => <TabTitle title="Nouvelle" icon={New} index={3} />}
+          title={() => <TabTitle title="Récent" icon={New} index={3} />}
           onMouseEnter={() => handleTabHover(3)}
           onMouseLeave={() => handleTabHover(-1)}
         />
       </TabBar>
-      <Divider style={{ backgroundColor: iconColor, borderRadius: 20 , opacity:0.1}} />
+      <Divider
+        style={{ backgroundColor: iconColor, borderRadius: 20, opacity: 0.1 }}
+      />
       <View style={styles.content}>
-        {selectedIndex === 0 && <Text category="h6">Tous les salles</Text>}
-        {selectedIndex === 1 && <Text category="h6">Salles Populaires</Text>}
-        {selectedIndex === 2 && <Text category="h6">Salles Top Notées</Text>}
-        {selectedIndex === 3 && <Text category="h6">Nouvelle salle</Text>}
+        {selectedIndex === 0 && <ListRoom></ListRoom>}
+        {selectedIndex === 1 && <PopularRoom></PopularRoom>}
+        {selectedIndex === 3 && <RecentRoom></RecentRoom>}
       </View>
     </View>
   );

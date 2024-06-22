@@ -1,10 +1,10 @@
 import { Text } from '@ui-kitten/components'
 import React from 'react'
 
-function ListRoom() {
+function PopularRoom() {
   return (
-    <Text>Tous les salles</Text>
+    <Text>Salles populaires</Text>
   )
 }
 
-export default ListRoom
+export default PopularRoom
