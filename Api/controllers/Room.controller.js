@@ -7,7 +7,7 @@ const AddRoom = async (req, res) => {
   let images = [];
 
   if (req.files) {
-    images = req.files.map((file) => file.path);
+    images = req.files.map((file) => `http://192.168.43.149:5000/${file.path}`);
   }
 
   try {
@@ -17,7 +17,7 @@ const AddRoom = async (req, res) => {
       max_capacity,
       description,
       equipments: equipments.split(","),
-      images,
+      images
     });
 
     res.status(200).json({ msg: "Room has been successfully registered" });

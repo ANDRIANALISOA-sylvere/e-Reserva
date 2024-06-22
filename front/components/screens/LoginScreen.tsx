@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TextInput, Alert } from "react-native";
-import axios from "axios";
+import axios from "../../api/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button, Input, Text, useTheme } from "@ui-kitten/components";
 
@@ -13,13 +13,11 @@ const LoginScreen = ({ navigation }: any) => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.43.149:5000/api/login",
+        "/login",
         { email, password }
       );
-      console.log("Response from server:", response.data);
       const token = response.data.token;
 
-      console.log("Token received:", token);
       await AsyncStorage.setItem("token", token);
       navigation.replace("RoomList");
     } catch (error: any) {

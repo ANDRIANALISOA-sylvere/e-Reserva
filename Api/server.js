@@ -16,6 +16,7 @@ connectDB();
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/uploads', express.static('uploads'));
 app.use("/api", UserRoute);
 app.use("/api", RoomRoute);
 app.use("/api", ReservationRoute);

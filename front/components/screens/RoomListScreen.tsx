@@ -128,7 +128,7 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <View style={styles.content}>
         {selectedIndex === 0 && <ListRoom></ListRoom>}
         {selectedIndex === 1 && <PopularRoom></PopularRoom>}
-        {selectedIndex === 3 && <RecentRoom></RecentRoom>}
+        {selectedIndex === 2 && <RecentRoom></RecentRoom>}
       </View>
     </View>
   );
