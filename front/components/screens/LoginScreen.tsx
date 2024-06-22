@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Button, TextInput, Alert } from "react-native";
+import { View, StyleSheet, TextInput, Alert } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button, Input, Text, useTheme } from "@ui-kitten/components";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const theme = useTheme();
 
   const handleLogin = async () => {
     try {
@@ -13,33 +16,37 @@ const LoginScreen = ({ navigation }: any) => {
         "http://192.168.43.149:5000/api/login",
         { email, password }
       );
+      console.log("Response from server:", response.data);
       const token = response.data.token;
 
+      console.log("Token received:", token);
       await AsyncStorage.setItem("token", token);
       navigation.replace("RoomList");
     } catch (error: any) {
-      Alert.alert("Login failed", error + "erreur");
+      Alert.alert("Login failed", error.message + " erreur");
     }
   };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Email"
         value={email}
+        status="primary"
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Password"
         value={password}
+        style={{ marginTop: 10 }}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button status="warning" appearance="outline" onPress={handleLogin}>
+        Login
+      </Button>
     </View>
   );
 };
@@ -54,14 +61,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingLeft: 8,
   },
 });
 

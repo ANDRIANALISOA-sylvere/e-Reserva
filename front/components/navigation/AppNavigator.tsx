@@ -9,23 +9,23 @@ const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
     <>
-      <Stack.Navigator initialRouteName="Splash">
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="RoomList"
-          component={RoomListScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
+        <Stack.Navigator initialRouteName="Splash">
+          <Stack.Screen
+            name="Splash"
+            component={SplashScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="RoomList"
+            component={RoomListScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
     </>
   );
 };

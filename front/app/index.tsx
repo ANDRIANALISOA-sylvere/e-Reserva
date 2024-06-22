@@ -1,10 +1,16 @@
 import AppNavigator from "@/components/navigation/AppNavigator";
-import { Text, View } from "react-native";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
+import * as eva from "@eva-design/eva";
+import { default as theme } from "../assets/theme.json";
 
 export default function Index() {
   return (
     <>
-    <AppNavigator></AppNavigator>
+      {/* <IconRegistry icons={EvaIconsPack} /> */}
+      <ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
+        <AppNavigator></AppNavigator>
+      </ApplicationProvider>
     </>
   );
 }
