@@ -159,7 +159,6 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   image: {
     width: "100%",
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   badge: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "black",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
@@ -230,7 +229,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeText: {
-    color: "#333",
+    color: "white",
     fontSize: 14,
   },
   reviewContainer: {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text,
@@ -87,6 +87,17 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     </View>
   );
 
+  const renderItem = () => {
+    if (selectedIndex === 0) {
+      return <ListRoom navigation={navigation} />;
+    } else if (selectedIndex === 1) {
+      return <PopularRoom />;
+    } else if (selectedIndex === 2) {
+      return <RecentRoom />;
+    }
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -125,11 +136,12 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <Divider
         style={{ backgroundColor: iconColor, borderRadius: 20, opacity: 0.1 }}
       />
-      <View style={styles.content}>
-        {selectedIndex === 0 && <ListRoom navigation={navigation} />}
-        {selectedIndex === 1 && <PopularRoom />}
-        {selectedIndex === 2 && <RecentRoom />}
-      </View>
+      <FlatList
+        data={[{ key: selectedIndex }]}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.key.toString()}
+        style={styles.content}
+      />
     </View>
   );
 };
