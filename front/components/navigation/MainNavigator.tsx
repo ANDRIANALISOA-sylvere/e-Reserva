@@ -16,6 +16,7 @@ import RoomDetailsScreen from "../screens/RoomDetailScreen";
 import FavorisScreen from "../screens/FavorisScreen";
 import ReservationScreen from "../screens/ReservationScreen";
 import NotificationScreen from "../screens/NotificationScreen";
+import ReservationModalScreen from "../screens/ReservationModalScreen";
 import { useTheme } from "@ui-kitten/components";
 
 type RootStackParamList = {
@@ -23,6 +24,7 @@ type RootStackParamList = {
   RoomList: undefined;
   Salle: { roomId: string };
   Favoris: undefined;
+  Reserver: undefined;
   Reservation: undefined;
   Notification: undefined;
   Account: undefined;
@@ -30,29 +32,25 @@ type RootStackParamList = {
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
-
-const getTabBarVisibility = (
-  route: RouteProp<RootStackParamList, "Room">
-): ViewStyle | undefined => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? "RoomList";
-  if (routeName === "Salle") {
-    return { display: "none" };
-  }
-  return { paddingVertical: 5 };
-};
+const RootStack = createStackNavigator();
 
 const RoomStack = () => (
   <Stack.Navigator>
-    <Stack.Screen
-      name="RoomList"
-      component={RoomListScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Salle"
-      component={RoomDetailsScreen}
-      options={{ headerShown: true }}
-    />
+    <RootStack.Group>
+      <Stack.Screen
+        name="RoomList"
+        component={RoomListScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Salle"
+        component={RoomDetailsScreen}
+        options={{ headerShown: true }}
+      />
+    </RootStack.Group>
+    <RootStack.Group screenOptions={{ presentation: "modal" }}>
+      <RootStack.Screen name="Reservation" component={ReservationModalScreen} />
+    </RootStack.Group>
   </Stack.Navigator>
 );
 
@@ -80,7 +78,7 @@ export default function MainNavigator() {
               size={size}
             />
           ),
-          tabBarStyle: getTabBarVisibility(route),
+          tabBarStyle: { paddingVertical: 5 },
         })}
       />
       <Tab.Screen
@@ -100,7 +98,7 @@ export default function MainNavigator() {
         }}
       />
       <Tab.Screen
-        name="Reservation"
+        name="Reserver"
         component={ReservationScreen}
         options={{
           tabBarLabel: "Reservation",

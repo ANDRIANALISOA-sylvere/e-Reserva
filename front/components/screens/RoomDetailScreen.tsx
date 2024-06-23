@@ -6,19 +6,28 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import axios from "../../api/axios";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Material from "react-native-vector-icons/MaterialIcons";
-import { Divider, useTheme } from "@ui-kitten/components";
+import { Button, Divider, useTheme } from "@ui-kitten/components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 
 type RootStackParamList = {
+  Room: undefined;
   RoomList: undefined;
   Salle: { roomId: string };
+  Favoris: undefined;
+  Reservation: undefined;
+  Notification: undefined;
+  Account: undefined;
+  Reserver: undefined;
+  AddReview: { roomId: string };
 };
+
 
 type RoomDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -58,10 +67,11 @@ interface Review {
   rating: number;
 }
 
-const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
+const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const roomId = route.params.roomId;
+  console.log("Room ID:", roomId);
   const theme = useTheme();
   const iconColor = theme["color-basic-600"];
 
@@ -90,6 +100,21 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
     fetchRoomReviews();
   }, [roomId]);
 
+  const renderRatingStars = (rating: number) => {
+    const stars = [];
+    const filledStars = Math.floor(rating);
+    for (let i = 1; i <= 5; i++) {
+      if (i <= filledStars) {
+        stars.push(<Ionicons key={i} name="star" size={16} color="orange" />);
+      } else {
+        stars.push(
+          <Ionicons key={i} name="star" size={16} color={iconColor} />
+        );
+      }
+    }
+    return stars;
+  };
+
   if (!room) {
     return (
       <View style={styles.container}>
@@ -101,9 +126,9 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
   return (
     <ScrollView style={styles.container}>
       <Image source={{ uri: room.images[0] }} style={styles.image} />
-      <TouchableOpacity style={styles.favIcon}>
+      <Pressable style={styles.favIcon}>
         <Ionicons name="heart-outline" size={20} color="#fff" />
-      </TouchableOpacity>
+      </Pressable>
       <View style={styles.contentContainer}>
         <Text style={styles.name}>{room.name}</Text>
         <View style={styles.infoContainer}>
@@ -118,6 +143,20 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
         </View>
         <Divider style={styles.divider} />
         <Text style={styles.price}>{room.price} Ar / heure</Text>
+        <Button
+          style={styles.reserveButton}
+          onPress={() => navigation.navigate("Reservation")}
+          accessoryLeft={(props) => (
+            <Ionicons
+              {...props}
+              color="white"
+              size={20}
+              name="checkmark-circle"
+            />
+          )}
+        >
+          Réserver
+        </Button>
         <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.description}>{room.description}</Text>
         {room.equipments && room.equipments.length > 1 && (
@@ -138,10 +177,15 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
             {reviews.map((item) => (
               <View key={item._id} style={styles.reviewContainer}>
                 <View style={styles.reviewHeader}>
+                  <Image
+                    source={{
+                      uri: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8YXZhdGFyfGVufDB8fDB8fHww",
+                    }}
+                    style={styles.avatar}
+                  />
                   <Text style={styles.userName}>{item.user_id.name}</Text>
                   <View style={styles.ratingContainer}>
-                    <Ionicons name="star" size={16} color="#FFD700" />
-                    <Text style={styles.rating}>{item.rating}</Text>
+                    {renderRatingStars(item.rating)}
                   </View>
                 </View>
                 <Text style={styles.comment}>{item.comment}</Text>
@@ -201,7 +245,6 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#4FC934",
     marginBottom: 15,
   },
   sectionTitle: {
@@ -214,6 +257,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: "#333",
+    textAlign: "justify",
+    opacity: 0.4,
   },
   equipmentsContainer: {
     flexDirection: "row",
@@ -224,7 +269,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 5,
     marginRight: 8,
     marginBottom: 8,
   },
@@ -240,17 +285,25 @@ const styles = StyleSheet.create({
   },
   reviewHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 8,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
   },
   userName: {
     fontSize: 16,
     fontWeight: "bold",
+    flex: 1,
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
   },
   rating: {
     fontSize: 14,
@@ -260,11 +313,20 @@ const styles = StyleSheet.create({
   comment: {
     fontSize: 14,
     color: "#555",
+    opacity: 0.6,
   },
   noReviews: {
     fontSize: 16,
     color: "#888",
     fontStyle: "italic",
+  },
+  reserveButton: {
+    marginTop: 20,
+  },
+  addReviewButton: {
+    marginBottom: 15,
+    backgroundColor: "#007bff",
+    borderRadius: 5,
   },
 });
 
