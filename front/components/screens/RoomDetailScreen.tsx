@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Image,
-  FlatList,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
@@ -121,14 +120,18 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
         <Text style={styles.price}>{room.price} Ar / heure</Text>
         <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.description}>{room.description}</Text>
-        <Text style={styles.sectionTitle}>Équipements</Text>
-        <View style={styles.equipmentsContainer}>
-          {room.equipments.map((equipment, index) => (
-            <View key={index} style={styles.badge}>
-              <Text style={styles.badgeText}>{equipment}</Text>
+        {room.equipments && room.equipments.length > 1 && (
+          <>
+            <Text style={styles.sectionTitle}>Équipements</Text>
+            <View style={styles.equipmentsContainer}>
+              {room.equipments.map((equipment, index) => (
+                <View key={index} style={styles.badge}>
+                  <Text style={styles.badgeText}>{equipment}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
+          </>
+        )}
         <Text style={styles.sectionTitle}>Avis</Text>
         {reviews.length > 0 ? (
           <View>
