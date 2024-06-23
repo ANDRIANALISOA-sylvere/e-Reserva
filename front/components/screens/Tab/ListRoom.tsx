@@ -5,7 +5,6 @@ import {
   StyleSheet,
   View,
   Text,
-  Dimensions,
   FlatList,
 } from "react-native";
 import axios from "../../../api/axios";
@@ -24,7 +23,7 @@ interface Room {
   images: string[];
 }
 
-const ListRoom: React.FC = () => {
+const ListRoom: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const roomsPerPage = 5;
 
@@ -41,6 +40,10 @@ const ListRoom: React.FC = () => {
     fetchRooms();
   }, []);
 
+  const handleRoomPress = (roomId: string) => {
+    navigation.navigate("Salle", { roomId });
+  };
+
   const renderRoomRow = ({ item, index }: { item: any; index: number }) => {
     const startIndex = index * roomsPerPage;
     return (
@@ -50,7 +53,11 @@ const ListRoom: React.FC = () => {
         style={styles.rowContainer}
       >
         {rooms.slice(startIndex, startIndex + roomsPerPage).map((room) => (
-          <TouchableOpacity key={room._id} style={styles.roomContainer}>
+          <TouchableOpacity
+            key={room._id}
+            style={styles.roomContainer}
+            onPress={() => handleRoomPress(room._id)}
+          >
             <Image
               source={{ uri: room.images[0] }}
               style={styles.image}

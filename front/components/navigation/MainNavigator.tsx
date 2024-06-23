@@ -3,15 +3,38 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Material from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import Account from "../screens/AccountScreen";
-import Room from "../screens/RoomListScreen";
+import RoomListScreen from "../screens/RoomListScreen";
+import RoomDetailsScreen from "../screens/RoomDetailScreen";
 import FavorisScreen from "../screens/FavorisScreen";
 import ReservationScreen from "../screens/ReservationScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import { useTheme } from "@ui-kitten/components";
 
+type RootStackParamList = {
+  RoomList: undefined;
+  Salle: { roomId: string };
+};
+
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
+
+const RoomStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="RoomList"
+      component={RoomListScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Salle"
+      component={RoomDetailsScreen}
+      options={{ headerShown: true }}
+    />
+  </Stack.Navigator>
+);
 
 export default function MainNavigator() {
   const theme = useTheme();
@@ -27,7 +50,7 @@ export default function MainNavigator() {
     >
       <Tab.Screen
         name="Room"
-        component={Room}
+        component={RoomStack}
         options={{
           tabBarLabel: "Explorer",
           headerShown: false,

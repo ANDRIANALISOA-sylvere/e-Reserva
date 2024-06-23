@@ -39,7 +39,7 @@ const ReviewOfRoom = async (req, res) => {
       return res.status(400).json("Room not found");
     }
 
-    const review = await ReviewModel.find({ room_id: room_id });
+    const review = await ReviewModel.find({ room_id: room_id }).populate("user_id");
     res.status(200).json({ review: review });
   } catch (error) {
     console.log(error.message);
