@@ -3,7 +3,8 @@ const multer = require("multer");
 const User = require("../models/User.model");
 
 const AddRoom = async (req, res) => {
-  const { name, owner_id, max_capacity, description, equipments } = req.body;
+  const { name, owner_id, max_capacity, price, description, equipments } =
+    req.body;
   let images = [];
 
   if (req.files) {
@@ -15,9 +16,10 @@ const AddRoom = async (req, res) => {
       name,
       owner_id,
       max_capacity,
+      price,
       description,
       equipments: equipments.split(","),
-      images
+      images,
     });
 
     res.status(200).json({ msg: "Room has been successfully registered" });
@@ -45,7 +47,7 @@ const GetRoomByOwner = async (req, res) => {
 
 const GetAllRoom = async (req, res) => {
   try {
-    const rooms = await Room.find({}).populate('owner_id');
+    const rooms = await Room.find({}).populate("owner_id");
     res.status(200).json({ rooms });
   } catch (error) {
     console.log(error);
@@ -53,11 +55,10 @@ const GetAllRoom = async (req, res) => {
   }
 };
 
-
 const GetRoomById = async (req, res) => {
   const id = req.params.id;
   try {
-    const room = await Room.findById({ _id: id }).populate('owner_id');
+    const room = await Room.findById({ _id: id }).populate("owner_id");
 
     if (!room) {
       return res.status(400).json("Room not found");

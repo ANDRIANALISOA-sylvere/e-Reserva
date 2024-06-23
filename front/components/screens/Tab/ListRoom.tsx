@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Image, StyleSheet, View, Text, Dimensions, FlatList } from "react-native";
+import {
+  ScrollView,
+  Image,
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  FlatList,
+} from "react-native";
 import axios from "../../../api/axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -7,8 +15,9 @@ interface Room {
   _id: string;
   name: string;
   owner_id: {
-    name : string
+    name: string;
   };
+  price: string;
   max_capacity: number;
   description: string;
   equipments: string[];
@@ -35,7 +44,11 @@ const ListRoom: React.FC = () => {
   const renderRoomRow = ({ item, index }: { item: any; index: number }) => {
     const startIndex = index * roomsPerPage;
     return (
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.rowContainer}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.rowContainer}
+      >
         {rooms.slice(startIndex, startIndex + roomsPerPage).map((room) => (
           <TouchableOpacity key={room._id} style={styles.roomContainer}>
             <Image
@@ -45,7 +58,12 @@ const ListRoom: React.FC = () => {
             />
             <Text style={styles.name}>{room.name}</Text>
             <Text style={styles.owner}>Responsable: {room.owner_id.name}</Text>
-            <Text style={styles.capacity}>Capacité: {room.max_capacity} personnes</Text>
+            <Text style={styles.capacity}>
+              Capacité: {room.max_capacity} pers
+            </Text>
+            <Text>
+              Prix : <Text style={styles.name}>{room.price} Ar / h</Text>
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -63,7 +81,6 @@ const ListRoom: React.FC = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   flatListContent: {
     paddingBottom: 20,
@@ -72,15 +89,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   roomContainer: {
-    width: 200,
+    width: 180,
     marginHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "#F0F0F0",
-    padding: 10,
   },
   image: {
     width: "100%",
-    height: 150,
+    height: 160,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -94,7 +110,7 @@ const styles = StyleSheet.create({
   },
   capacity: {
     marginBottom: 5,
-    opacity:0.6
+    opacity: 0.6,
   },
   description: {
     marginBottom: 5,
@@ -103,7 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginTop: 5,
-  }
+  },
 });
 
 export default ListRoom;

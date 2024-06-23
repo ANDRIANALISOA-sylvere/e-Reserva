@@ -1,12 +1,12 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 
-function HomeScreen() {
+function ChatScreen() {
   return (
     <View>
-        <Text>Home</Text>
+        <Text>Chat</Text>
     </View>
   )
 }
 
-export default HomeScreen
+export default ChatScreen
