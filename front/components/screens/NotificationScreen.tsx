@@ -1,12 +1,12 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 
-function ChatScreen() {
+function NotificationScreen() {
   return (
     <View>
-        <Text>Chat</Text>
+        <Text>Notification</Text>
     </View>
   )
 }
 
-export default ChatScreen
+export default NotificationScreen

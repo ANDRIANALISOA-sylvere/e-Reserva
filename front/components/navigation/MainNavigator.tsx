@@ -2,12 +2,13 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Material from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 import Account from "../screens/AccountScreen";
 import Room from "../screens/RoomListScreen";
 import FavorisScreen from "../screens/FavorisScreen";
 import ReservationScreen from "../screens/ReservationScreen";
-import ChatScreen from "../screens/ChatScreen";
+import NotificationScreen from "../screens/NotificationScreen";
 import { useTheme } from "@ui-kitten/components";
 
 const Tab = createBottomTabNavigator();
@@ -70,18 +71,19 @@ export default function MainNavigator() {
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={ChatScreen}
+        name="Notification"
+        component={NotificationScreen}
         options={{
-          tabBarLabel: "Message",
+          tabBarLabel: "Notification",
           headerShown: false,
           tabBarIcon: ({ color, size, focused }) => (
-            <Material
-              name={focused ? "chat" : "chat-outline"}
+            <Icon
+              name={focused ? "bell" : "bell-o"}
               color={color}
               size={size}
             />
           ),
+          tabBarBadge: 3,
         }}
       />
       <Tab.Screen

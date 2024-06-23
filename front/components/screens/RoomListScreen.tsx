@@ -91,7 +91,7 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text category="h6">Bonjour, Joséphin</Text>
-        <Icon name="bell-o" size={24} style={styles.icon} color={iconColor} />
+        {/* <Icon name="bell-o" size={24} style={styles.icon} color={iconColor} /> */}
       </View>
       <View style={styles.searchContainer}>
         <Input
