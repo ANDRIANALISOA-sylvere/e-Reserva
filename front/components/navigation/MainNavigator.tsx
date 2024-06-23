@@ -4,6 +4,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Material from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { createStackNavigator } from "@react-navigation/stack";
+import {
+  getFocusedRouteNameFromRoute,
+  RouteProp,
+} from "@react-navigation/native";
+import { ViewStyle } from "react-native";
 
 import Account from "../screens/AccountScreen";
 import RoomListScreen from "../screens/RoomListScreen";
@@ -14,12 +19,27 @@ import NotificationScreen from "../screens/NotificationScreen";
 import { useTheme } from "@ui-kitten/components";
 
 type RootStackParamList = {
+  Room: undefined;
   RoomList: undefined;
   Salle: { roomId: string };
+  Favoris: undefined;
+  Reservation: undefined;
+  Notification: undefined;
+  Account: undefined;
 };
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
+
+const getTabBarVisibility = (
+  route: RouteProp<RootStackParamList, "Room">
+): ViewStyle | undefined => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? "RoomList";
+  if (routeName === "Salle") {
+    return { display: "none" };
+  }
+  return { paddingVertical: 5 };
+};
 
 const RoomStack = () => (
   <Stack.Navigator>
@@ -45,13 +65,12 @@ export default function MainNavigator() {
       screenOptions={{
         tabBarActiveTintColor: "#FF835C",
         tabBarInactiveTintColor: iconColor,
-        tabBarStyle: { paddingVertical: 5 },
       }}
     >
       <Tab.Screen
         name="Room"
         component={RoomStack}
-        options={{
+        options={({ route }) => ({
           tabBarLabel: "Explorer",
           headerShown: false,
           tabBarIcon: ({ color, size, focused }) => (
@@ -61,7 +80,8 @@ export default function MainNavigator() {
               size={size}
             />
           ),
-        }}
+          tabBarStyle: getTabBarVisibility(route),
+        })}
       />
       <Tab.Screen
         name="Favoris"
@@ -76,6 +96,7 @@ export default function MainNavigator() {
               size={size}
             />
           ),
+          tabBarStyle: { paddingVertical: 5 },
         }}
       />
       <Tab.Screen
@@ -91,6 +112,7 @@ export default function MainNavigator() {
               size={size}
             />
           ),
+          tabBarStyle: { paddingVertical: 5 },
         }}
       />
       <Tab.Screen
@@ -107,6 +129,7 @@ export default function MainNavigator() {
             />
           ),
           tabBarBadge: 3,
+          tabBarStyle: { paddingVertical: 5 },
         }}
       />
       <Tab.Screen
@@ -122,6 +145,7 @@ export default function MainNavigator() {
               size={size}
             />
           ),
+          tabBarStyle: { paddingVertical: 5 },
         }}
       />
     </Tab.Navigator>

@@ -6,17 +6,15 @@ import {
   Image,
   FlatList,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import axios from "../../api/axios";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Material from "react-native-vector-icons/MaterialIcons";
+import { Divider, useTheme } from "@ui-kitten/components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
-
-interface RoomDetailProps {
-  navigation: RoomDetailScreenNavigationProp;
-  route: RoomDetailScreenRouteProp;
-}
 
 type RootStackParamList = {
   RoomList: undefined;
@@ -27,7 +25,13 @@ type RoomDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Salle"
 >;
+
 type RoomDetailScreenRouteProp = RouteProp<RootStackParamList, "Salle">;
+
+interface RoomDetailProps {
+  navigation: RoomDetailScreenNavigationProp;
+  route: RoomDetailScreenRouteProp;
+}
 
 interface Room {
   _id: string;
@@ -59,11 +63,13 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const roomId = route.params.roomId;
+  const theme = useTheme();
+  const iconColor = theme["color-basic-600"];
 
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
-        const response = await axios.get(`/rooms/${roomId}`);
+        const response = await axios.get<{ room: Room }>(`/rooms/${roomId}`);
         setRoom(response.data.room);
       } catch (error) {
         console.log("Error fetching room details:", error);
@@ -72,7 +78,9 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
 
     const fetchRoomReviews = async () => {
       try {
-        const response = await axios.get(`/reviews?room_id=${roomId}`);
+        const response = await axios.get<{ review: Review[] }>(
+          `/reviews?room_id=${roomId}`
+        );
         setReviews(response.data.review);
       } catch (error) {
         console.log("Error fetching room reviews:", error);
@@ -92,86 +100,118 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Image source={{ uri: room.images[0] }} style={styles.image} />
-      <Text style={styles.name}>{room.name}</Text>
-      <Text style={styles.owner}>Owner: {room.owner_id.name}</Text>
-      <Text style={styles.capacity}>
-        Capacity: {room.max_capacity} personnes
-      </Text>
-      <Text style={styles.price}>Price: {room.price} Ar</Text>
-      <Text style={styles.description}>{room.description}</Text>
-
-      <Text style={styles.sectionTitle}>Équipements:</Text>
-      <View style={styles.equipmentsContainer}>
-        {room.equipments.map((equipment, index) => (
-          <View key={index} style={styles.badge}>
-            <Text style={styles.badgeText}>{equipment}</Text>
-          </View>
-        ))}
-      </View>
-
-      <Text style={styles.sectionTitle}>Avis:</Text>
-      {reviews.length > 0 ? (
-        <FlatList
-          data={reviews}
-          renderItem={({ item }) => (
-            <View style={styles.reviewContainer}>
-              <Text style={styles.userName}>{item.user_id.name}</Text>
-              <Text style={styles.comment}>{item.comment}</Text>
-              <Text style={styles.rating}>Rating: {item.rating}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item._id}
-        />
-      ) : (
-        <Text>Aucun avis pour cette salle.</Text>
-      )}
-
       <TouchableOpacity style={styles.favIcon}>
-        <Ionicons name="star-outline" size={30} color="#FFD700" />
+        <Ionicons name="heart-outline" size={20} color="#fff" />
       </TouchableOpacity>
-    </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.name}>{room.name}</Text>
+        <View style={styles.infoContainer}>
+          <View style={styles.infoItem}>
+            <Material name="people" size={24} color={iconColor} />
+            <Text style={styles.infoText}>{room.max_capacity} personnes</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Icon name="user-o" size={20} color={iconColor} />
+            <Text style={styles.infoText}>{room.owner_id.name}</Text>
+          </View>
+        </View>
+        <Divider style={styles.divider} />
+        <Text style={styles.price}>{room.price} Ar / heure</Text>
+        <Text style={styles.sectionTitle}>Description</Text>
+        <Text style={styles.description}>{room.description}</Text>
+        <Text style={styles.sectionTitle}>Équipements</Text>
+        <View style={styles.equipmentsContainer}>
+          {room.equipments.map((equipment, index) => (
+            <View key={index} style={styles.badge}>
+              <Text style={styles.badgeText}>{equipment}</Text>
+            </View>
+          ))}
+        </View>
+        <Text style={styles.sectionTitle}>Avis</Text>
+        {reviews.length > 0 ? (
+          <View>
+            {reviews.map((item) => (
+              <View key={item._id} style={styles.reviewContainer}>
+                <View style={styles.reviewHeader}>
+                  <Text style={styles.userName}>{item.user_id.name}</Text>
+                  <View style={styles.ratingContainer}>
+                    <Ionicons name="star" size={16} color="#FFD700" />
+                    <Text style={styles.rating}>{item.rating}</Text>
+                  </View>
+                </View>
+                <Text style={styles.comment}>{item.comment}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.noReviews}>Aucun avis pour cette salle.</Text>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#fff",
   },
   image: {
     width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 20,
+    height: 250,
+  },
+  favIcon: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 50,
+    padding: 4,
+  },
+  contentContainer: {
+    padding: 20,
   },
   name: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 15,
   },
-  owner: {
-    fontSize: 18,
-    marginBottom: 10,
+  infoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
   },
-  capacity: {
-    fontSize: 18,
-    marginBottom: 10,
+  infoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  infoText: {
+    fontSize: 16,
+    marginLeft: 8,
+    color: "#666",
+  },
+  divider: {
+    backgroundColor: "#e0e0e0",
+    marginVertical: 15,
   },
   price: {
-    fontSize: 18,
-    marginBottom: 10,
-    color: "green",
-  },
-  description: {
-    fontSize: 16,
-    marginBottom: 20,
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#4FC934",
+    marginBottom: 15,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
+    marginTop: 20,
     marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#333",
   },
   equipmentsContainer: {
     flexDirection: "row",
@@ -179,38 +219,50 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   badge: {
-    backgroundColor: "#333",
-    padding: 5,
-    borderRadius: 5,
-    marginRight: 5,
-    marginBottom: 5,
+    backgroundColor: "#f0f0f0",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 8,
+    marginBottom: 8,
   },
   badgeText: {
-    color: "#FFF",
+    color: "#333",
+    fontSize: 14,
   },
   reviewContainer: {
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
+    marginBottom: 15,
+    backgroundColor: "#f9f9f9",
+    padding: 15,
+    borderRadius: 8,
+  },
+  reviewHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
   },
   userName: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 5,
   },
-  comment: {
-    fontSize: 16,
-    marginBottom: 5,
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   rating: {
     fontSize: 14,
-    color: "#888",
+    marginLeft: 4,
+    color: "#FFD700",
   },
-  favIcon: {
-    position: "absolute",
-    top: 10,
-    right: 10,
+  comment: {
+    fontSize: 14,
+    color: "#555",
+  },
+  noReviews: {
+    fontSize: 16,
+    color: "#888",
+    fontStyle: "italic",
   },
 });
 
