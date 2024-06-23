@@ -1,16 +1,29 @@
 import React, { useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { Layout, Input, Button, Text, Datepicker } from "@ui-kitten/components";
+import { Layout, Button, Datepicker } from "@ui-kitten/components";
+import Toast from "react-native-toast-message";
 import axios from "axios";
 
 const ReservationModalScreen = () => {
   const [reservationDateTime, setReservationDateTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const userId = "66755fe10eeb4233046495a3";
   const id = "6677e85cb72a594401bb2c93";
+
+  const showToast = (type: any, text1: any, text2: any) => {
+    Toast.show({
+      type: type,
+      position: "top",
+      text1: text1,
+      text2: text2,
+      visibilityTime: 4000,
+      autoHide: true,
+      topOffset: 30,
+      bottomOffset: 40,
+    });
+  };
 
   const handleReservation = async () => {
     setLoading(true);
@@ -26,45 +39,57 @@ const ReservationModalScreen = () => {
         }
       );
 
-      setMessage(response.data.message);
+      showToast("success", "Succès", response.data.message + " 👋");
+      if (response.data.erreur) {
+        showToast("error", "Erreur", response.data.erreur);
+      }
       setReservationDateTime(new Date());
       setEndTime(new Date());
     } catch (error: any) {
       console.error(error);
-      setMessage(error.response.data.message);
+      if (error.response && error.response.status === 400) {
+        showToast("error", "Erreur", error.response.data.message);
+      } else {
+        showToast(
+          "error",
+          "Erreur",
+          "Une erreur s'est produite. Veuillez réessayer plus tard."
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Layout style={styles.container}>
-        <Datepicker
-          style={styles.input}
-          label="Date Début"
-          date={reservationDateTime}
-          onSelect={setReservationDateTime}
-        />
+    <>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Layout style={styles.container}>
+          <Datepicker
+            style={styles.input}
+            label="Date Début"
+            date={reservationDateTime}
+            onSelect={setReservationDateTime}
+          />
 
-        <Datepicker
-          style={styles.input}
-          label="Date fin"
-          date={endTime}
-          onSelect={setEndTime}
-        />
+          <Datepicker
+            style={styles.input}
+            label="Date fin"
+            date={endTime}
+            onSelect={setEndTime}
+          />
 
-        <Button
-          style={styles.button}
-          onPress={handleReservation}
-          disabled={loading}
-        >
-          {loading ? "Envoyer..." : "Envoyer"}
-        </Button>
-
-        {message && <Text style={styles.message}>{message}</Text>}
-      </Layout>
-    </SafeAreaView>
+          <Button
+            style={styles.button}
+            onPress={handleReservation}
+            disabled={loading}
+          >
+            {loading ? "Envoyer..." : "Envoyer"}
+          </Button>
+        </Layout>
+      </SafeAreaView>
+      <Toast />
+    </>
   );
 };
 
@@ -78,10 +103,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 16,
-  },
-  message: {
-    marginTop: 16,
-    textAlign: "center",
   },
 });
 

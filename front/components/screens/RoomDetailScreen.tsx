@@ -28,7 +28,6 @@ type RootStackParamList = {
   AddReview: { roomId: string };
 };
 
-
 type RoomDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Salle"

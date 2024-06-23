@@ -6,7 +6,7 @@ const AddReservation = async (req, res) => {
   const { room_id, user_id, date_debut, end_date, reservation_status } =
     req.body;
 
-    console.log(date_debut,end_date);
+  console.log(date_debut, end_date);
 
   try {
     const user = await UserModel.findById(user_id);
@@ -30,8 +30,8 @@ const AddReservation = async (req, res) => {
     });
 
     if (existingReservations.length > 0) {
-      return res.status(400).json({
-        message: "La salle est déjà réservée pour la période demandée.",
+      return res.json({
+        erreur: "La salle est déjà réservée pour la période demandée.",
       });
     }
 
@@ -49,12 +49,10 @@ const AddReservation = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        message:
-          "Une erreur s'est produite lors de la création de la réservation.",
-      });
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la création de la réservation.",
+    });
   }
 };
 
