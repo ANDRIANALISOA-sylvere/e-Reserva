@@ -57,7 +57,7 @@ const GetAllRoom = async (req, res) => {
 const GetRoomById = async (req, res) => {
   const id = req.params.id;
   try {
-    const room = await Room.findById({ _id: id });
+    const room = await Room.findById({ _id: id }).populate('owner_id');
 
     if (!room) {
       return res.status(400).json("Room not found");
