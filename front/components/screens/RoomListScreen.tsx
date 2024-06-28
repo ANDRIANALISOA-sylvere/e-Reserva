@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -14,7 +14,6 @@ import ListRoom from "./Tab/ListRoom";
 import PopularRoom from "./Tab/PopularRoom";
 import RecentRoom from "./Tab/RecentRoom";
 
-
 interface TabTitleProps {
   title: string;
   icon: React.ComponentType<any>;
@@ -28,9 +27,27 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(-1);
+  const [user, setUser] = useState<{ name: string } | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        if (userData) {
+          const user = JSON.parse(userData);
+          setUser(user);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("user");
     navigation.replace("Login");
   };
 
@@ -101,10 +118,9 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Button title="Logout" onPress={handleLogout}>
-      </Button>
+      <Button title="Logout" onPress={handleLogout}></Button>
       <View style={styles.header}>
-        <Text category="h6">Bonjour, Joséphin</Text>
+        <Text category="h6">Bonjour, {user ? user.name : "Chargement..."}</Text>
       </View>
       <View style={styles.searchContainer}>
         <Input
@@ -130,8 +146,8 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           onMouseLeave={() => handleTabHover(-1)}
         />
         <Tab
-          title={() => <TabTitle title="Récent" icon={New} index={3} />}
-          onMouseEnter={() => handleTabHover(3)}
+          title={() => <TabTitle title="Récent" icon={New} index={2} />}
+          onMouseEnter={() => handleTabHover(2)}
           onMouseLeave={() => handleTabHover(-1)}
         />
       </TabBar>
