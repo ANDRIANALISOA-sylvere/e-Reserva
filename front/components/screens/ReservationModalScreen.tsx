@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Layout, Button, Datepicker } from "@ui-kitten/components";
 import Toast from "react-native-toast-message";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const ReservationModalScreen = () => {
   const [reservationDateTime, setReservationDateTime] = useState(new Date());
@@ -29,7 +29,7 @@ const ReservationModalScreen = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://192.168.43.149:5000/api/reservations",
+        "/reservations",
         {
           room_id: id,
           user_id: userId,

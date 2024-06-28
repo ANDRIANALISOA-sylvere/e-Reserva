@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text,
@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import ListRoom from "./Tab/ListRoom";
 import PopularRoom from "./Tab/PopularRoom";
 import RecentRoom from "./Tab/RecentRoom";
+
 
 interface TabTitleProps {
   title: string;
@@ -100,9 +101,10 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Button title="Logout" onPress={handleLogout}>
+      </Button>
       <View style={styles.header}>
         <Text category="h6">Bonjour, Joséphin</Text>
-        {/* <Icon name="bell-o" size={24} style={styles.icon} color={iconColor} /> */}
       </View>
       <View style={styles.searchContainer}>
         <Input

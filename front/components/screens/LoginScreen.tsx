@@ -14,13 +14,16 @@ const LoginScreen = ({ navigation }: any) => {
     try {
       const response = await axios.post(
         "/login",
-        { email, password }
+        {
+          email: email,
+          password: password,
+        }
       );
       const token = response.data.token;
 
       await AsyncStorage.setItem("token", token);
       navigation.replace("RoomList");
-    } catch (error: any) {
+    } catch (error: any) {      
       Alert.alert("Login failed", error.message + " erreur");
     }
   };
