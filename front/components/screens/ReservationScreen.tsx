@@ -5,14 +5,14 @@ import {
   FlatList,
   ActivityIndicator,
   View,
-  TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import { Layout, Text, Card } from "@ui-kitten/components";
+import { MenuItem, Layout, Text, Divider } from "@ui-kitten/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../api/axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 interface Reservation {
   _id: string;
@@ -50,10 +50,22 @@ type Props = {
   navigation: ReservationScreenNavigationProp;
 };
 
+const CalendarIcon = (props: any) => (
+  <Layout {...props} style={[props.style, styles.iconContainer]}>
+    <AntDesign name="calendar" size={20} />
+  </Layout>
+);
+
+const ForwardIcon = (props: any) => (
+  <Layout {...props} style={[props.style, styles.iconContainer]}>
+    <Icon name="arrow-redo-outline" size={20} />
+  </Layout>
+);
+
 const ReservationScreen: React.FC<Props> = ({ navigation }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const fetchReservations = async () => {
     try {
@@ -94,41 +106,27 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   const renderItem = ({ item }: { item: Reservation }) => (
-    <Card
-      style={styles.card}
+    <MenuItem
+      title={(evaProps) => (
+        <Layout style={styles.titleContainer}>
+          <Text
+            {...evaProps}
+          >{`${item.room_id.name} - ${item.room_id.price} Ar/h`}</Text>
+        </Layout>
+      )}
+      accessoryLeft={CalendarIcon}
+      accessoryRight={ForwardIcon}
       onPress={() =>
         navigation.navigate("ReservationDetail", { reservation: item })
       }
-    >
-      <Text category="h6">Réservation ID: {item._id}</Text>
-      <Text category="s1">Salle: {item.room_id.name}</Text>
-      <Text category="s1">Prix: {item.room_id.price} €</Text>
-      <Text category="s1">
-        Date de début: {new Date(item.date_debut).toLocaleDateString()}
-      </Text>
-      <Text category="s1">
-        Date de fin: {new Date(item.end_date).toLocaleDateString()}
-      </Text>
-      <Text category="s1">Status: {item.reservation_status}</Text>
-      <Text category="c1">
-        Créé le: {new Date(item.createdAt).toLocaleDateString()}
-      </Text>
-      <Text category="c1">
-        Mis à jour le: {new Date(item.updatedAt).toLocaleDateString()}
-      </Text>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={() =>
-          navigation.navigate("ReservationDetail", { reservation: item })
-        }
-      >
-        <Icon name="arrow-forward" style={styles.icon} />
-      </TouchableOpacity>
-    </Card>
+    />
   );
-
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text category="h4">Liste des reservations</Text>
+        <Divider></Divider>
+      </View>
       <FlatList
         data={reservations}
         renderItem={renderItem}
@@ -136,6 +134,7 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        ItemSeparatorComponent={() => <Divider />}
       />
     </SafeAreaView>
   );
@@ -157,13 +156,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconContainer: {
-    position: "absolute",
-    top: 16,
-    right: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {
     width: 24,
     height: 24,
+  },
+  titleContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  header: {
+    margin: 20,
+    padding: 5,
   },
 });
 
