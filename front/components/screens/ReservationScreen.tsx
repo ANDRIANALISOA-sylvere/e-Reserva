@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   View,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { Layout, Text, Card } from "@ui-kitten/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -52,26 +53,35 @@ type Props = {
 const ReservationScreen: React.FC<Props> = ({ navigation }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
+
+  const fetchReservations = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        const userId = user._id;
+        const response = await axios.get(`/reservations?user_id=${userId}`);
+        setReservations(response.data.reservation);
+      } else {
+        console.log("User data not found in AsyncStorage");
+      }
+    } catch (error) {
+      console.error("Error fetching reservations: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("user");
-        if (userData) {
-          const user = JSON.parse(userData);
-          const userId = user._id;
-          const response = await axios.get(`/reservations?user_id=${userId}`);
-          setReservations(response.data.reservation);
-        } else {
-          console.log("User data not found in AsyncStorage");
-        }
-      } catch (error) {
-        console.error("Error fetching reservations: ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchReservations();
+  }, []);
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
     fetchReservations();
   }, []);
 
@@ -123,6 +133,9 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
         data={reservations}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
