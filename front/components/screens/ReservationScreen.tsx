@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text,
-  View,
-  FlatList,
+  SafeAreaView,
   StyleSheet,
+  FlatList,
   ActivityIndicator,
+  View
 } from "react-native";
+import { Layout, Text, Card, Spinner } from '@ui-kitten/components';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../api/axios";
 
@@ -55,24 +56,26 @@ const ReservationScreen: React.FC = () => {
   }
 
   const renderItem = ({ item }: { item: Reservation }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>Réservation ID: {item._id}</Text>
-      <Text>
-        Date de début: {new Date(item.date_debut).toLocaleDateString()}
-      </Text>
-      <Text>Date de fin: {new Date(item.end_date).toLocaleDateString()}</Text>
-      <Text>Status: {item.reservation_status}</Text>
-    </View>
+    <Card style={styles.card}>
+      <Text category='h6'>Réservation ID: {item._id}</Text>
+      <Text category='s1'>Salle ID: {item.room_id}</Text>
+      <Text category='s1'>Utilisateur ID: {item.user_id}</Text>
+      <Text category='s1'>Date de début: {new Date(item.date_debut).toLocaleDateString()}</Text>
+      <Text category='s1'>Date de fin: {new Date(item.end_date).toLocaleDateString()}</Text>
+      <Text category='s1'>Status: {item.reservation_status}</Text>
+      <Text category='c1'>Créé le: {new Date(item.createdAt).toLocaleDateString()}</Text>
+      <Text category='c1'>Mis à jour le: {new Date(item.updatedAt).toLocaleDateString()}</Text>
+    </Card>
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={reservations}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -80,16 +83,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: "#fff",
   },
-  item: {
-    backgroundColor: "#f9c2ff",
-    padding: 20,
+  card: {
     marginVertical: 8,
-    borderRadius: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
+    padding: 16,
   },
   loader: {
     flex: 1,

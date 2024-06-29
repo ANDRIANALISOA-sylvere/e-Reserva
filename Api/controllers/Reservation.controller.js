@@ -64,7 +64,9 @@ const GetReservationByUser = async (req, res) => {
       return res.status(400).json("User not found");
     }
 
-    const reservation = await Reservation.find({ user_id });
+    const reservation = await Reservation.find({ user_id })
+      .populate("room_id")
+      .populate("user_id");
     res.status(200).json({ reservation: reservation });
   } catch (error) {
     console.error(error);
