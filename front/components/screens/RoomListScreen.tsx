@@ -46,9 +46,13 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   }, []);
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("user");
-    navigation.replace("Login");
+    try {
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("user");
+      navigation.replace("Login");
+    } catch (error) {
+      console.error("Error during logout: ", error);
+    }
   };
 
   const renderSearchIcon = (props: any) => (

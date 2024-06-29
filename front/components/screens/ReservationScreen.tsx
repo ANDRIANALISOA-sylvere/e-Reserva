@@ -4,24 +4,52 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  View
+  View,
+  TouchableOpacity,
 } from "react-native";
-import { Layout, Text, Card, Spinner } from '@ui-kitten/components';
+import { Layout, Text, Card } from "@ui-kitten/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../api/axios";
+import { StackNavigationProp } from "@react-navigation/stack";
+import Icon from "react-native-vector-icons/Ionicons";
 
 interface Reservation {
   _id: string;
-  room_id: string;
   user_id: string;
   date_debut: string;
   end_date: string;
   reservation_status: string;
   createdAt: string;
   updatedAt: string;
+  room_id: {
+    name: string;
+    price: number;
+    images: string[];
+  };
 }
 
-const ReservationScreen: React.FC = () => {
+type RootStackParamList = {
+  Room: undefined;
+  RoomList: undefined;
+  Salle: { roomId: string };
+  Favoris: undefined;
+  Reserver: undefined;
+  Reservation: { roomId: string };
+  ReservationDetail: { reservation: Reservation };
+  Notification: undefined;
+  Account: undefined;
+};
+
+type ReservationScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Reservation"
+>;
+
+type Props = {
+  navigation: ReservationScreenNavigationProp;
+};
+
+const ReservationScreen: React.FC<Props> = ({ navigation }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -56,15 +84,36 @@ const ReservationScreen: React.FC = () => {
   }
 
   const renderItem = ({ item }: { item: Reservation }) => (
-    <Card style={styles.card}>
-      <Text category='h6'>Réservation ID: {item._id}</Text>
-      <Text category='s1'>Salle ID: {item.room_id}</Text>
-      <Text category='s1'>Utilisateur ID: {item.user_id}</Text>
-      <Text category='s1'>Date de début: {new Date(item.date_debut).toLocaleDateString()}</Text>
-      <Text category='s1'>Date de fin: {new Date(item.end_date).toLocaleDateString()}</Text>
-      <Text category='s1'>Status: {item.reservation_status}</Text>
-      <Text category='c1'>Créé le: {new Date(item.createdAt).toLocaleDateString()}</Text>
-      <Text category='c1'>Mis à jour le: {new Date(item.updatedAt).toLocaleDateString()}</Text>
+    <Card
+      style={styles.card}
+      onPress={() =>
+        navigation.navigate("ReservationDetail", { reservation: item })
+      }
+    >
+      <Text category="h6">Réservation ID: {item._id}</Text>
+      <Text category="s1">Salle: {item.room_id.name}</Text>
+      <Text category="s1">Prix: {item.room_id.price} €</Text>
+      <Text category="s1">
+        Date de début: {new Date(item.date_debut).toLocaleDateString()}
+      </Text>
+      <Text category="s1">
+        Date de fin: {new Date(item.end_date).toLocaleDateString()}
+      </Text>
+      <Text category="s1">Status: {item.reservation_status}</Text>
+      <Text category="c1">
+        Créé le: {new Date(item.createdAt).toLocaleDateString()}
+      </Text>
+      <Text category="c1">
+        Mis à jour le: {new Date(item.updatedAt).toLocaleDateString()}
+      </Text>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() =>
+          navigation.navigate("ReservationDetail", { reservation: item })
+        }
+      >
+        <Icon name="arrow-forward" style={styles.icon} />
+      </TouchableOpacity>
     </Card>
   );
 
@@ -93,6 +142,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  iconContainer: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
 });
 

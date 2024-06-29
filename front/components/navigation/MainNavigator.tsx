@@ -4,10 +4,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Material from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-  getFocusedRouteNameFromRoute,
-  RouteProp,
-} from "@react-navigation/native";
 import { ViewStyle } from "react-native";
 
 import Account from "../screens/AccountScreen";
@@ -17,7 +13,23 @@ import FavorisScreen from "../screens/FavorisScreen";
 import ReservationScreen from "../screens/ReservationScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import ReservationModalScreen from "../screens/ReservationModalScreen";
+import ReservationDetailScreen from "../screens/ReservationDetailScreen";
 import { useTheme } from "@ui-kitten/components";
+
+interface Reservation {
+  _id: string;
+  user_id: string;
+  date_debut: string;
+  end_date: string;
+  reservation_status: string;
+  createdAt: string;
+  updatedAt: string;
+  room_id: {
+    name: string;
+    price: number;
+    images: string[];
+  };
+}
 
 type RootStackParamList = {
   Room: undefined;
@@ -25,7 +37,8 @@ type RootStackParamList = {
   Salle: { roomId: string };
   Favoris: undefined;
   Reserver: undefined;
-  Reservation: undefined;
+  Reservation: { roomId: string };
+  ReservationDetail: { reservation: Reservation };
   Notification: undefined;
   Account: undefined;
 };
@@ -49,8 +62,27 @@ const RoomStack = () => (
       />
     </RootStack.Group>
     <RootStack.Group screenOptions={{ presentation: "modal" }}>
-      <RootStack.Screen name="Reservation" component={ReservationModalScreen} />
+      <RootStack.Screen
+        name="Reservation"
+        component={ReservationModalScreen}
+        options={{ headerShown: true, title: "Réservation de salle" }}
+      />
     </RootStack.Group>
+  </Stack.Navigator>
+);
+
+const ReservationStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Reservation"
+      component={ReservationScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="ReservationDetail"
+      component={ReservationDetailScreen}
+      options={{ headerShown: true, title: "Détails de la réservation" }}
+    />
   </Stack.Navigator>
 );
 
@@ -99,7 +131,7 @@ export default function MainNavigator() {
       />
       <Tab.Screen
         name="Reserver"
-        component={ReservationScreen}
+        component={ReservationStack}
         options={{
           tabBarLabel: "Reservation",
           headerShown: false,

@@ -1,16 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Layout, Button, Datepicker } from "@ui-kitten/components";
 import Toast from "react-native-toast-message";
 import axios from "../../api/axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ReservationModalScreen = () => {
+interface User {
+  _id: string;
+}
+
+const ReservationModalScreen: React.FC = ({ route }: any) => {
   const [reservationDateTime, setReservationDateTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [utilisateur, setUser] = useState<User | null>(null);
 
-  const userId = "66755fe10eeb4233046495a3";
-  const id = "6677e85cb72a594401bb2c93";
+  const { roomId } = route.params;
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        if (userData) {
+          const userInfo: User = JSON.parse(userData);
+          setUser(userInfo);
+        } else {
+          console.log("User data not found in AsyncStorage");
+        }
+      } catch (error) {
+        console.error("Error fetching user: ", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const showToast = (type: any, text1: any, text2: any) => {
     Toast.show({
@@ -28,16 +51,13 @@ const ReservationModalScreen = () => {
   const handleReservation = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "/reservations",
-        {
-          room_id: id,
-          user_id: userId,
-          date_debut: reservationDateTime,
-          end_date: endTime,
-          reservation_status: "pending",
-        }
-      );
+      const response = await axios.post("/reservations", {
+        room_id: roomId,
+        user_id: utilisateur?._id,
+        date_debut: reservationDateTime,
+        end_date: endTime,
+        reservation_status: "pending",
+      });
 
       showToast("success", "Succès", response.data.message + " 👋");
       if (response.data.erreur) {

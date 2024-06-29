@@ -16,16 +16,31 @@ import { Button, Divider, useTheme } from "@ui-kitten/components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 
+interface Reservation {
+  _id: string;
+  user_id: string;
+  date_debut: string;
+  end_date: string;
+  reservation_status: string;
+  createdAt: string;
+  updatedAt: string;
+  room_id: {
+    name: string;
+    price: number;
+    images: string[];
+  };
+}
+
 type RootStackParamList = {
   Room: undefined;
   RoomList: undefined;
   Salle: { roomId: string };
   Favoris: undefined;
-  Reservation: undefined;
+  Reserver: undefined;
+  Reservation: { roomId: string };
+  ReservationDetail: { reservation: Reservation };
   Notification: undefined;
   Account: undefined;
-  Reserver: undefined;
-  AddReview: { roomId: string };
 };
 
 type RoomDetailScreenNavigationProp = StackNavigationProp<
@@ -144,7 +159,7 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
         <Text style={styles.price}>{room.price} Ar / heure</Text>
         <Button
           style={styles.reserveButton}
-          onPress={() => navigation.navigate("Reservation")}
+          onPress={() => navigation.navigate("Reservation", { roomId: roomId })}
           accessoryLeft={(props) => (
             <Ionicons
               {...props}
