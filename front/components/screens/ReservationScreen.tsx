@@ -106,7 +106,7 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   const renderItem = ({ item }: { item: Reservation }) => (
-    <View>
+    <View style={styles.reservationItem}>
       <MenuItem
         title={(evaProps) => (
           <Layout style={styles.titleContainer}>
@@ -131,10 +131,9 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
           <Text category="h6">Aucune reservation</Text>
         </View>
       ) : (
-        <View style={{marginBottom:30}}>
+        <View style={{ flex: 1 }}>
           <View style={styles.header}>
             <Text category="h4">Liste des reservations</Text>
-            <Divider></Divider>
           </View>
           <FlatList
             data={reservations}
@@ -143,7 +142,7 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            ItemSeparatorComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </View>
       )}
@@ -155,11 +154,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
-  },
-  card: {
-    marginVertical: 8,
-    padding: 16,
+    backgroundColor: "#f5f5f5",
   },
   loader: {
     flex: 1,
@@ -169,10 +164,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     justifyContent: "center",
     alignItems: "center",
-  },
-  icon: {
-    width: 24,
-    height: 24,
   },
   titleContainer: {
     flex: 1,
@@ -186,6 +177,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  reservationItem: {
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  separator: {
+    height: 10,
   },
 });
 

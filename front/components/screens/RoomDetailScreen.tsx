@@ -5,8 +5,8 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  TouchableOpacity,
   Pressable,
+  Dimensions,
 } from "react-native";
 import axios from "../../api/axios";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -15,6 +15,7 @@ import Material from "react-native-vector-icons/MaterialIcons";
 import { Button, Divider, useTheme } from "@ui-kitten/components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
+import Swiper from "react-native-swiper";
 
 interface Reservation {
   _id: string;
@@ -81,6 +82,8 @@ interface Review {
   rating: number;
 }
 
+const { width: viewportWidth } = Dimensions.get('window');
+
 const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -140,7 +143,20 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.contentContainer}>
-        <Image source={{ uri: room.images[0] }} style={styles.image} />
+        {room.images.length > 1 ? (
+          <Swiper
+            style={styles.wrapper}
+            showsButtons={true}
+            nextButton={<Text style={styles.buttonText}>›</Text>}
+            prevButton={<Text style={styles.buttonText}>‹</Text>}
+          >
+            {room.images.map((image, index) => (
+              <Image key={index} source={{ uri: image }} style={styles.image} />
+            ))}
+          </Swiper>
+        ) : (
+          <Image source={{ uri: room.images[0] }} style={styles.image} />
+        )}
         <Pressable style={styles.favIcon}>
           <Ionicons name="heart-outline" size={20} color="#fff" />
         </Pressable>
@@ -157,24 +173,11 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
         </View>
         <Divider style={styles.divider} />
         <Text style={styles.price}>{room.price} Ar / heure</Text>
+        <Text style={styles.sectionTitle}>Localisation</Text>
         <Image
           style={styles.localisation}
           source={require("../../assets/images/Capture d’écran_2024-06-30_11-00-10.png")}
-        ></Image>
-        <Button
-          style={styles.reserveButton}
-          onPress={() => navigation.navigate("Reservation", { roomId: roomId })}
-          accessoryLeft={(props) => (
-            <Ionicons
-              {...props}
-              color="white"
-              size={20}
-              name="checkmark-circle"
-            />
-          )}
-        >
-          Réserver
-        </Button>
+        />
         <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.description}>{room.description}</Text>
         {room.equipments && room.equipments.length > 1 && (
@@ -214,6 +217,20 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
           <Text style={styles.noReviews}>Aucun avis pour cette salle.</Text>
         )}
       </View>
+      <Button
+        style={styles.reserveButton}
+        onPress={() => navigation.navigate("Reservation", { roomId: roomId })}
+        accessoryLeft={(props) => (
+          <Ionicons
+            {...props}
+            color="white"
+            size={20}
+            name="checkmark-circle"
+          />
+        )}
+      >
+        Réserver
+      </Button>
     </ScrollView>
   );
 };
@@ -222,6 +239,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+  },
+  wrapper: {
+    height: 250,
   },
   image: {
     width: "100%",
@@ -238,6 +258,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 50,
+    fontWeight: "bold",
   },
   name: {
     fontSize: 24,
@@ -342,6 +367,7 @@ const styles = StyleSheet.create({
   },
   reserveButton: {
     marginTop: 20,
+    margin: 10
   },
   addReviewButton: {
     marginBottom: 15,
