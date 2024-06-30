@@ -106,36 +106,47 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   const renderItem = ({ item }: { item: Reservation }) => (
-    <MenuItem
-      title={(evaProps) => (
-        <Layout style={styles.titleContainer}>
-          <Text
-            {...evaProps}
-          >{`${item.room_id.name} - ${item.room_id.price} Ar/h`}</Text>
-        </Layout>
-      )}
-      accessoryLeft={CalendarIcon}
-      accessoryRight={ForwardIcon}
-      onPress={() =>
-        navigation.navigate("ReservationDetail", { reservation: item })
-      }
-    />
+    <View>
+      <MenuItem
+        title={(evaProps) => (
+          <Layout style={styles.titleContainer}>
+            <Text
+              {...evaProps}
+            >{`${item.room_id.name} - ${item.room_id.price} Ar/h`}</Text>
+          </Layout>
+        )}
+        accessoryLeft={CalendarIcon}
+        accessoryRight={ForwardIcon}
+        onPress={() =>
+          navigation.navigate("ReservationDetail", { reservation: item })
+        }
+      />
+    </View>
   );
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text category="h4">Liste des reservations</Text>
-        <Divider></Divider>
-      </View>
-      <FlatList
-        data={reservations}
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ItemSeparatorComponent={() => <Divider />}
-      />
+      {reservations.length === 0 ? (
+        <View style={styles.noReservations}>
+          <Text category="h6">Aucune reservation</Text>
+        </View>
+      ) : (
+        <View style={{marginBottom:30}}>
+          <View style={styles.header}>
+            <Text category="h4">Liste des reservations</Text>
+            <Divider></Divider>
+          </View>
+          <FlatList
+            data={reservations}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -170,6 +181,11 @@ const styles = StyleSheet.create({
   header: {
     margin: 20,
     padding: 5,
+  },
+  noReservations: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
