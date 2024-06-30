@@ -91,7 +91,7 @@ const GetAllReservation = async (req, res) => {
 const GetReservationById = async (req, res) => {
   const id = req.params.id;
   try {
-    const reservation = await Reservation.findById({ _id: id });
+    const reservation = await Reservation.findById({ _id: id }).populate("room_id user_id");
     res.status(200).json({ reservation: reservation });
   } catch (error) {
     console.error(error);
