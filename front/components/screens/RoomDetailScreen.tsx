@@ -139,11 +139,11 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: room.images[0] }} style={styles.image} />
-      <Pressable style={styles.favIcon}>
-        <Ionicons name="heart-outline" size={20} color="#fff" />
-      </Pressable>
       <View style={styles.contentContainer}>
+        <Image source={{ uri: room.images[0] }} style={styles.image} />
+        <Pressable style={styles.favIcon}>
+          <Ionicons name="heart-outline" size={20} color="#fff" />
+        </Pressable>
         <Text style={styles.name}>{room.name}</Text>
         <View style={styles.infoContainer}>
           <View style={styles.infoItem}>
@@ -157,6 +157,10 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
         </View>
         <Divider style={styles.divider} />
         <Text style={styles.price}>{room.price} Ar / heure</Text>
+        <Image
+          style={styles.localisation}
+          source={require("../../assets/images/Capture d’écran_2024-06-30_11-00-10.png")}
+        ></Image>
         <Button
           style={styles.reserveButton}
           onPress={() => navigation.navigate("Reservation", { roomId: roomId })}
@@ -217,10 +221,12 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   image: {
     width: "100%",
     height: 250,
+    borderRadius: 5,
   },
   favIcon: {
     position: "absolute",
@@ -231,12 +237,13 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   contentContainer: {
-    padding: 20,
+    padding: 10,
   },
   name: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 15,
+    marginTop: 20,
   },
   infoContainer: {
     flexDirection: "row",
@@ -270,9 +277,8 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#333",
     textAlign: "justify",
-    opacity: 0.4,
+    opacity: 0.5,
   },
   equipmentsContainer: {
     flexDirection: "row",
@@ -341,6 +347,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#007bff",
     borderRadius: 5,
+  },
+  localisation: {
+    width: "100%",
+    marginTop: 10,
+    height: 200,
   },
 });
 
