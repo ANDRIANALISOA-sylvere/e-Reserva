@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   View,
   RefreshControl,
+  Image,
 } from "react-native";
 import { MenuItem, Layout, Text, Divider } from "@ui-kitten/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,6 +27,7 @@ interface Reservation {
     name: string;
     price: number;
     images: string[];
+    createdAt: string;
   };
 }
 
@@ -97,6 +99,14 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
     fetchReservations();
   }, []);
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${day}/${month}/${year}`;
+  };
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -110,12 +120,20 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
       <MenuItem
         title={(evaProps) => (
           <Layout style={styles.titleContainer}>
-            <Text
-              {...evaProps}
-            >{`${item.room_id.name} - ${item.room_id.price} Ar/h`}</Text>
+            <Text {...evaProps} style={styles.roomName}>
+              {item.room_id.name}
+            </Text>
+            <Text {...evaProps} style={styles.dateText}>
+              {formatDate(item.createdAt)}
+            </Text>
           </Layout>
         )}
-        accessoryLeft={CalendarIcon}
+        accessoryLeft={(props) => (
+          <Image
+            source={{ uri: item.room_id.images[0] }}
+            style={styles.roomImage}
+          />
+        )}
         accessoryRight={ForwardIcon}
         onPress={() =>
           navigation.navigate("ReservationDetail", { reservation: item })
@@ -168,6 +186,16 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
     justifyContent: "center",
+    marginLeft: 20,
+  },
+  roomName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  dateText: {
+    fontSize: 14,
+    color: "#888",
+    marginTop: 4,
   },
   header: {
     margin: 20,
@@ -186,6 +214,11 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 10,
+  },
+  roomImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
 });
 
