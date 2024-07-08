@@ -8,7 +8,7 @@ import {
   RefreshControl,
   Image,
 } from "react-native";
-import { MenuItem, Layout, Text, Divider } from "@ui-kitten/components";
+import { MenuItem, Layout, Text, Divider, Button } from "@ui-kitten/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../api/axios";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -41,6 +41,7 @@ type RootStackParamList = {
   ReservationDetail: { reservation: Reservation };
   Notification: undefined;
   Account: undefined;
+  AddRoom : undefined;
 };
 
 type ReservationScreenNavigationProp = StackNavigationProp<
@@ -150,6 +151,16 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       ) : (
         <View style={{ flex: 1 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <Text>Avez-vous une salle ?</Text>
+            <Button size="small" onPress={()=> navigation.navigate("AddRoom")}>Ajouter une salle</Button>
+          </View>
           <View style={styles.header}>
             <Text category="h4">Liste des reservations</Text>
           </View>

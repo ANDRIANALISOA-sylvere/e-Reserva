@@ -15,6 +15,7 @@ import NotificationScreen from "../screens/NotificationScreen";
 import ReservationModalScreen from "../screens/ReservationModalScreen";
 import ReservationDetailScreen from "../screens/ReservationDetailScreen";
 import { useTheme } from "@ui-kitten/components";
+import Room from "../screens/Room";
 
 interface Reservation {
   _id: string;
@@ -41,6 +42,7 @@ type RootStackParamList = {
   ReservationDetail: { reservation: Reservation };
   Notification: undefined;
   Account: undefined;
+  AddRoom: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -82,6 +84,11 @@ const ReservationStack = () => (
       name="ReservationDetail"
       component={ReservationDetailScreen}
       options={{ headerShown: true, title: "Détails de la réservation" }}
+    />
+    <Stack.Screen
+      name="AddRoom"
+      component={Room}
+      options={{ headerShown: true, title: "Ajout de la Salle" }}
     />
   </Stack.Navigator>
 );

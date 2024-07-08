@@ -8,7 +8,7 @@ const AddRoom = async (req, res) => {
   let images = [];
 
   if (req.files) {
-    images = req.files.map((file) => `http://192.168.43.149:5000/${file.path}`);
+    images = req.files.map((file) => `http://192.168.43.65:5000/${file.path}`);
   }
 
   try {
