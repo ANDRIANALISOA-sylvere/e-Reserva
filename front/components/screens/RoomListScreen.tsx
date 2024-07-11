@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Button } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Button,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text,
@@ -21,6 +27,8 @@ interface TabTitleProps {
 }
 
 const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  4;
+  const [refreshKey, setRefreshKey] = useState<number>(0);
   const theme = useTheme();
   const iconColor = theme["color-basic-600"];
   const activeColor = "#FF835C";
@@ -44,16 +52,6 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     fetchUserData();
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("token");
-      await AsyncStorage.removeItem("user");
-      navigation.replace("Login");
-    } catch (error) {
-      console.error("Error during logout: ", error);
-    }
-  };
 
   const renderSearchIcon = (props: any) => (
     <Icon name="search" size={20} color={iconColor} {...props} />
@@ -109,9 +107,13 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     </View>
   );
 
+  const handleRefreshRooms = () => {
+    setRefreshKey((oldKey) => oldKey + 1);
+  };
+
   const renderItem = () => {
     if (selectedIndex === 0) {
-      return <ListRoom navigation={navigation} />;
+      return <ListRoom navigation={navigation} refreshKey={refreshKey} />;
     } else if (selectedIndex === 1) {
       return <PopularRoom />;
     } else if (selectedIndex === 2) {
@@ -122,11 +124,13 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Button title="Logout" onPress={handleLogout}></Button>
       <View style={styles.header}>
         <Text style={{ fontFamily: "Poppins-Bold" }}>
           Bonjour, {user ? user.name : "Chargement..."} 👋
         </Text>
+        <TouchableOpacity onPress={handleRefreshRooms}>
+          <Icon name="refresh" size={20} color={iconColor} />
+        </TouchableOpacity>
       </View>
       <View style={styles.searchContainer}>
         <Input
@@ -175,7 +179,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor:"#fff"
+    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",

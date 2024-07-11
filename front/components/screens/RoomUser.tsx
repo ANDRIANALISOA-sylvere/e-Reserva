@@ -125,36 +125,33 @@ const RoomUser: React.FC<Props> = ({ navigation }) => {
         )}
         accessoryRight={() => <Icon name="angle-right" size={20} />}
         onPress={() => navigation.navigate("Salle", { roomId: item._id })}
-        style={{ backgroundColor: "#F8F8F8",borderRadius:5 }}
+        style={{ backgroundColor: "#F8F8F8", borderRadius: 5 }}
       />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {rooms.length === 0 ? (
-        <View style={styles.noRooms}>
-          <Text category="h6">Aucune salle</Text>
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <View style={styles.header}>
-            <Text style={{ fontFamily: "Poppins-Bold" }}>Liste des salles</Text>
-            <Button size="small" onPress={() => navigation.navigate("AddRoom")}>
-              Ajouter une salle
-            </Button>
+      <View style={styles.header}>
+        <Text style={{ fontFamily: "Poppins-Bold" }}>Liste des salles</Text>
+        <Button size="small" onPress={() => navigation.navigate("AddRoom")}>
+          Ajouter une salle
+        </Button>
+      </View>
+      <FlatList
+        data={rooms}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ListEmptyComponent={() => (
+          <View style={styles.noReservations}>
+            <Text category="h6">Aucune salle</Text>
           </View>
-          <FlatList
-            data={rooms}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-        </View>
-      )}
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -199,8 +196,7 @@ const styles = StyleSheet.create({
   roomItem: {
     backgroundColor: "#ffffff",
     borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
+    padding: 5,
   },
   separator: {
     height: 10,
@@ -209,6 +205,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+  },
+  noReservations: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 300,
   },
 });
 

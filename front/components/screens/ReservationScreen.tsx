@@ -140,35 +140,32 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
         onPress={() =>
           navigation.navigate("ReservationDetail", { reservation: item })
         }
-        style={{ backgroundColor: "#F8F8F8",borderRadius:5 }}
+        style={{ backgroundColor: "#F8F8F8", borderRadius: 5 }}
       />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {reservations.length === 0 ? (
-        <View style={styles.noReservations}>
-          <Text category="h6">Aucune reservation</Text>
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <View style={styles.header}>
-            <Text style={{ fontFamily: "Poppins-Bold" }}>
-              Liste des reservations
-            </Text>
+      <View style={styles.header}>
+        <Text style={{ fontFamily: "Poppins-Bold" }}>
+          Liste des réservations
+        </Text>
+      </View>
+      <FlatList
+        data={reservations}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ListEmptyComponent={() => (
+          <View style={styles.noReservations}>
+            <Text category="h6">Aucune réservation</Text>
           </View>
-          <FlatList
-            data={reservations}
-            renderItem={renderItem}
-            keyExtractor={(item) => item._id}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-        </View>
-      )}
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -206,16 +203,10 @@ const styles = StyleSheet.create({
     margin: 15,
     padding: 5,
   },
-  noReservations: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   reservationItem: {
     backgroundColor: "#ffffff",
     borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
+    padding: 5,
   },
   separator: {
     height: 10,
@@ -224,6 +215,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+  },
+  noReservations: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 300,
   },
 });
 

@@ -23,7 +23,12 @@ interface Room {
   images: string[];
 }
 
-const ListRoom: React.FC<{ navigation: any }> = ({ navigation }) => {
+interface Props {
+  navigation: any;
+  refreshKey: number;
+}
+
+const ListRoom: React.FC<Props> = ({ navigation, refreshKey }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const roomsPerPage = 5;
 
@@ -38,7 +43,7 @@ const ListRoom: React.FC<{ navigation: any }> = ({ navigation }) => {
     };
 
     fetchRooms();
-  }, []);
+  }, [refreshKey]);
 
   const handleRoomPress = (roomId: string) => {
     navigation.navigate("Salle", { roomId });

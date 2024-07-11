@@ -44,7 +44,7 @@ type RootStackParamList = {
   RoomUser: undefined;
   Account: undefined;
   AddRoom: undefined;
-  Salles : undefined
+  Salles: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -62,7 +62,13 @@ const RoomStack = () => (
       <Stack.Screen
         name="Salle"
         component={RoomDetailsScreen}
-        options={{ headerShown: true }}
+        options={{
+          headerShown: true,
+          headerTitleStyle: {
+            fontFamily: "Poppins-Bold",
+            fontSize: 18,
+          },
+        }}
       />
     </RootStack.Group>
     <RootStack.Group screenOptions={{ presentation: "modal" }}>
@@ -92,7 +98,14 @@ const ReservationStack = () => (
     <Stack.Screen
       name="ReservationDetail"
       component={ReservationDetailScreen}
-      options={{ headerShown: true, title: "Détails de la réservation" }}
+      options={{
+        headerShown: true,
+        title: "Détails de la réservation",
+        headerTitleStyle: {
+          fontFamily: "Poppins-Bold",
+          fontSize: 18,
+        },
+      }}
     />
   </Stack.Navigator>
 );
@@ -107,7 +120,14 @@ const SalleStack = () => (
     <Stack.Screen
       name="AddRoom"
       component={Room}
-      options={{ headerShown: true, title: "Nouvelle salle" }}
+      options={{
+        headerShown: true,
+        title: "Nouvelle salle",
+        headerTitleStyle: {
+          fontFamily: "Poppins-Bold",
+          fontSize: 18,
+        },
+      }}
     />
   </Stack.Navigator>
 );
