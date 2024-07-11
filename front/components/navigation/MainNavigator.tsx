@@ -69,7 +69,14 @@ const RoomStack = () => (
       <RootStack.Screen
         name="Reservation"
         component={ReservationModalScreen}
-        options={{ headerShown: true, title: "Réservation de salle" }}
+        options={{
+          headerShown: true,
+          title: "Réservation de salle",
+          headerTitleStyle: {
+            fontFamily: "Poppins-Bold",
+            fontSize: 18,
+          },
+        }}
       />
     </RootStack.Group>
   </Stack.Navigator>

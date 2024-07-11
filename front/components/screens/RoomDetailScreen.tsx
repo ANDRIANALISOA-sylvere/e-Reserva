@@ -82,7 +82,7 @@ interface Review {
   rating: number;
 }
 
-const { width: viewportWidth } = Dimensions.get('window');
+const { width: viewportWidth } = Dimensions.get("window");
 
 const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [room, setRoom] = useState<Room | null>(null);
@@ -172,12 +172,9 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
           </View>
         </View>
         <Divider style={styles.divider} />
-        <Text style={styles.price}>{room.price} Ar / heure</Text>
-        <Text style={styles.sectionTitle}>Localisation</Text>
-        <Image
-          style={styles.localisation}
-          source={require("../../assets/images/Capture d’écran_2024-06-30_11-00-10.png")}
-        />
+        <View style={styles.priceBadge}>
+          <Text style={styles.priceText}>{room.price} Ar / heure</Text>
+        </View>
         <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.description}>{room.description}</Text>
         {room.equipments && room.equipments.length > 1 && (
@@ -185,8 +182,8 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
             <Text style={styles.sectionTitle}>Équipements</Text>
             <View style={styles.equipmentsContainer}>
               {room.equipments.map((equipment, index) => (
-                <View key={index} style={styles.badge}>
-                  <Text style={styles.badgeText}>{equipment}</Text>
+                <View key={index} style={styles.equipmentBadge}>
+                  <Text style={styles.equipmentText}>{equipment}</Text>
                 </View>
               ))}
             </View>
@@ -262,13 +259,13 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 50,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
   name: {
     fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 15,
     marginTop: 20,
+    fontFamily:"Poppins-Bold"
   },
   infoContainer: {
     flexDirection: "row",
@@ -283,44 +280,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
     color: "#666",
+    fontFamily:"Poppins"
   },
   divider: {
     backgroundColor: "#e0e0e0",
     marginVertical: 15,
   },
-  price: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 15,
+  priceBadge: {
+    backgroundColor: "#E8F5E9",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    alignSelf: "flex-start",
+    marginTop: 5,
+  },
+  priceText: {
+    color: "#2E7D32",
+    fontFamily: "Poppins-Bold",
+    fontSize: 12,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
+    fontFamily:"Poppins-Bold"
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
     textAlign: "justify",
-    opacity: 0.5,
+    opacity: 0.3,
+    fontFamily: "Poppins",
   },
   equipmentsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 20,
-  },
-  badge: {
-    backgroundColor: "black",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 5,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  badgeText: {
-    color: "white",
-    fontSize: 14,
   },
   reviewContainer: {
     marginBottom: 15,
@@ -367,7 +362,7 @@ const styles = StyleSheet.create({
   },
   reserveButton: {
     marginTop: 20,
-    margin: 10
+    margin: 10,
   },
   addReviewButton: {
     marginBottom: 15,
@@ -378,6 +373,19 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 10,
     height: 200,
+  },
+  equipmentBadge: {
+    backgroundColor: "#E3F2FD",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 5,
+    marginBottom: 5,
+  },
+  equipmentText: {
+    color: "#1565C0",
+    fontFamily: "Poppins-Bold",
+    fontSize: 12,
   },
 });
 
