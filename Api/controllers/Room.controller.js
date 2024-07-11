@@ -1,5 +1,5 @@
-const Room = require("../models/Rooms.model");
 const multer = require("multer");
+const Room = require("../models/Rooms.model");
 const User = require("../models/User.model");
 
 const AddRoom = async (req, res) => {
@@ -8,7 +8,7 @@ const AddRoom = async (req, res) => {
   let images = [];
 
   if (req.files) {
-    images = req.files.map((file) => `http://192.168.43.65:5000/${file.path}`);
+    images = req.files.map((file) => `http://192.168.10.102:5000/${file.path}`);
   }
 
   try {

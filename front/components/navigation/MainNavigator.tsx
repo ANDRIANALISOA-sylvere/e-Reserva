@@ -88,7 +88,7 @@ const ReservationStack = () => (
     <Stack.Screen
       name="AddRoom"
       component={Room}
-      options={{ headerShown: true, title: "Ajout de la Salle" }}
+      options={{ headerShown: true, title: "Nouvelle salle" }}
     />
   </Stack.Navigator>
 );
