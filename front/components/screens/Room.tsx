@@ -67,14 +67,12 @@ const AddRoom: React.FC = () => {
           'Accept': 'application/json'
         },
         transformRequest: (data, headers) => {
-          return formData; // Empêche Axios de modifier le FormData
+          return formData;
         },
       });
 
       console.log('Response:', response.data);
-      // Réinitialiser le formulaire ou naviguer vers une autre page
       alert('Salle ajoutée avec succès !');
-      // Réinitialiser le formulaire
       setRoomData({
         name: '',
         owner_id: '668ad6676abe4ede21640a5a',
