@@ -4,20 +4,25 @@ import axios from "../../api/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button, Input, Text, useTheme } from "@ui-kitten/components";
 
-const LoginScreen = ({ navigation }: any) => {
+const RegisterScreen = ({ navigation }: any) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
 
   const theme = useTheme();
 
-  const handleLogin = async () => {
-    if (!email && !password) {
+  const handleRegister = async () => {
+    if (!name || !email || !password || !phone) {
       Alert.alert("Alerte", "Tous les champs sont obligatoires");
     } else {
       try {
-        const response = await axios.post("/login", {
+        const response = await axios.post("/register", {
+          name: name,
           email: email,
           password: password,
+          phone: phone,
+          role: "organisateur",
         });
         const token = response.data.token;
         const user = response.data.user;
@@ -26,25 +31,30 @@ const LoginScreen = ({ navigation }: any) => {
         await AsyncStorage.setItem("token", token);
         navigation.replace("RoomList");
       } catch (error: any) {
-        Alert.alert("Login failed", error.message + " erreur");
+        Alert.alert("Inscription échouée", error.message + " erreur");
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenue !</Text>
+      <Text style={styles.title}>Inscription</Text>
       <Text style={styles.instructions}>
-        Entrez vos identifiants pour vous connecter.
+        Remplissez le formulaire pour créer votre compte.
       </Text>
       <Image
-        source={require("../../assets/images/login.png")}
+        source={require("../../assets/images/Register.png")}
         style={styles.image}
+      />
+      <Input
+        placeholder="Nom"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
       />
       <Input
         placeholder="Email"
         value={email}
-        status="primary"
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -53,27 +63,34 @@ const LoginScreen = ({ navigation }: any) => {
       <Input
         placeholder="Mot de passe"
         value={password}
-        style={[styles.input, { marginTop: 10 }]}
         onChangeText={setPassword}
         secureTextEntry
+        style={styles.input}
+      />
+      <Input
+        placeholder="Téléphone"
+        value={phone}
+        onChangeText={setPhone}
+        keyboardType="phone-pad"
+        style={styles.input}
       />
       <Button
         status="primary"
-        onPress={handleLogin}
+        onPress={handleRegister}
         style={{ marginTop: 20, width: "100%" }}
       >
-        Connexion
+        S'inscrire
       </Button>
-      <Text style={styles.registerLink}>
-        Vous n'avez pas de compte ?{" "}
+      <Text style={styles.loginLink}>
+        Vous avez déjà un compte ?{" "}
         <Text
           style={{
             color: theme["color-primary-500"],
             fontFamily: "Poppins-Bold",
           }}
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.navigate("Login")}
         >
-          S'inscrire
+          Connectez-vous
         </Text>
       </Text>
     </View>
@@ -96,21 +113,22 @@ const styles = StyleSheet.create({
   instructions: {
     fontFamily: "Poppins",
     marginBottom: 20,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    fontSize: 14,
   },
   input: {
     width: "100%",
     marginBottom: 10,
     fontFamily: "Poppins",
   },
-  registerLink: {
+  loginLink: {
     marginTop: 20,
     fontFamily: "Poppins",
   },
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
