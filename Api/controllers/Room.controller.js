@@ -11,6 +11,8 @@ const AddRoom = async (req, res) => {
     images = req.files.map((file) => `http://192.168.43.149:5000/${file.path}`);
   }
 
+  console.log(name,owner_id,max_capacity,price,description,equipments,images)
+
   try {
     await Room.create({
       name,

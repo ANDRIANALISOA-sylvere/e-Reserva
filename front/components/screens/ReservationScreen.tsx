@@ -41,7 +41,7 @@ type RootStackParamList = {
   ReservationDetail: { reservation: Reservation };
   Notification: undefined;
   Account: undefined;
-  AddRoom : undefined;
+  AddRoom: undefined;
 };
 
 type ReservationScreenNavigationProp = StackNavigationProp<
@@ -158,11 +158,18 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
               alignItems: "center",
             }}
           >
-            <Text>Avez-vous une salle ?</Text>
-            <Button size="small" onPress={()=> navigation.navigate("AddRoom")}>Ajouter une salle</Button>
+            <Text style={{ fontFamily: "Poppins" }}>Avez-vous une salle ?</Text>
+            <Button 
+  size="small" 
+  onPress={() => navigation.navigate("AddRoom")}
+>
+  {evaProps => <Text {...evaProps} style={styles.buttonText}>Ajouter une salle</Text>}
+</Button>
           </View>
           <View style={styles.header}>
-            <Text category="h4">Liste des reservations</Text>
+            <Text style={{ fontFamily: "Poppins-Bold" }}>
+              Liste des reservations
+            </Text>
           </View>
           <FlatList
             data={reservations}
@@ -209,7 +216,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   header: {
-    margin: 20,
+    margin: 15,
     padding: 5,
   },
   noReservations: {
@@ -230,6 +237,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+  },
+  buttonText: {
+    fontFamily: 'Poppins',
+    fontSize: 14,
+    color:"white"
   },
 });
 
