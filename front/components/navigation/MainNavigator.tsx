@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Material from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ViewStyle } from "react-native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 import Account from "../screens/AccountScreen";
 import RoomListScreen from "../screens/RoomListScreen";
@@ -96,12 +98,27 @@ const ReservationStack = () => (
 export default function MainNavigator() {
   const theme = useTheme();
   const iconColor = theme["color-basic-600"];
+  const [loaded, error] = useFonts({
+    Poppins: require("../../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
   return (
     <Tab.Navigator
       initialRouteName="Room"
       screenOptions={{
         tabBarActiveTintColor: "#FF835C",
         tabBarInactiveTintColor: iconColor,
+        tabBarLabelStyle: { fontFamily: "Poppins" },
       }}
     >
       <Tab.Screen

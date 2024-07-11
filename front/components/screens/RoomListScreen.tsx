@@ -124,13 +124,16 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     <View style={styles.container}>
       <Button title="Logout" onPress={handleLogout}></Button>
       <View style={styles.header}>
-        <Text category="h6">Bonjour, {user ? user.name : "Chargement..."}</Text>
+        <Text style={{ fontFamily: "Poppins-Bold" }}>
+          Bonjour, {user ? user.name : "Chargement..."} 👋
+        </Text>
       </View>
       <View style={styles.searchContainer}>
         <Input
           style={styles.input}
           accessoryLeft={renderSearchIcon}
           placeholder="Chercher une salle ..."
+          placeholderTextColor="#A0A0A0"
         />
       </View>
       <TabBar
@@ -187,6 +190,8 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: 20,
+    fontFamily: "Poppins",
+    fontSize: 14,
   },
   tabBar: {
     backgroundColor: "transparent",
@@ -204,6 +209,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     textAlign: "center",
+    fontFamily: "Poppins",
   },
 });
 

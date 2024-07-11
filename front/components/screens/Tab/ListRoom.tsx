@@ -63,14 +63,15 @@ const ListRoom: React.FC<{ navigation: any }> = ({ navigation }) => {
               style={styles.image}
               onError={() => console.log("Image load error")}
             />
-            <Text style={styles.name}>{room.name}</Text>
-            <Text style={styles.owner}>Responsable: {room.owner_id.name}</Text>
-            <Text style={styles.capacity}>
-              Capacité: {room.max_capacity} pers
-            </Text>
-            <Text>
-              Prix : <Text style={styles.name}>{room.price} Ar / h</Text>
-            </Text>
+            <View style={styles.body}>
+              <Text style={styles.name}>{room.name}</Text>
+              <Text style={styles.capacity}>
+                Capacité: {room.max_capacity} pers
+              </Text>
+              <View style={styles.priceBadge}>
+                <Text style={styles.priceText}>{room.price} Ar / h</Text>
+              </View>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -100,24 +101,26 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "#F0F0F0",
+    overflow: "hidden",
   },
   image: {
     width: "100%",
     height: 160,
-    borderRadius: 10,
-    marginBottom: 10,
+    borderTopRightRadius: 10,
   },
   name: {
-    fontWeight: "bold",
     marginBottom: 5,
+    fontFamily: "Poppins-Bold",
   },
   owner: {
     opacity: 0.6,
     marginBottom: 5,
+    fontFamily: "Poppins",
   },
   capacity: {
     marginBottom: 5,
     opacity: 0.6,
+    fontFamily: "Poppins",
   },
   description: {
     marginBottom: 5,
@@ -126,6 +129,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginTop: 5,
+  },
+  body: {
+    backgroundColor: "white",
+    padding: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  priceBadge: {
+    backgroundColor: "#E8F5E9",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    alignSelf: "flex-start",
+    marginTop: 5,
+  },
+  priceText: {
+    color: "#2E7D32",
+    fontFamily: "Poppins-Bold",
+    fontSize: 12,
   },
 });
 
