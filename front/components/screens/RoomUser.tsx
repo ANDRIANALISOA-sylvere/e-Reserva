@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,13 +8,11 @@ import {
   RefreshControl,
   Image,
 } from "react-native";
-import { MenuItem, Layout, Text, Divider, Button } from "@ui-kitten/components";
+import { MenuItem, Layout, Text, Button } from "@ui-kitten/components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../api/axios";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Icon from "react-native-vector-icons/Ionicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import FontIcon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 interface Reservation {
   _id: string;
@@ -28,8 +26,20 @@ interface Reservation {
     name: string;
     price: number;
     images: string[];
-    createdAt: string;
   };
+}
+
+interface Room {
+  _id: string;
+  name: string;
+  owner_id: string;
+  max_capacity: number;
+  price: number;
+  description: string;
+  equipments: string[];
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 type RootStackParamList = {
@@ -45,69 +55,49 @@ type RootStackParamList = {
   AddRoom: undefined;
 };
 
-type ReservationScreenNavigationProp = StackNavigationProp<
+type RoomScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Reservation"
+  "Salle"
 >;
 
 type Props = {
-  navigation: ReservationScreenNavigationProp;
+  navigation: RoomScreenNavigationProp;
 };
 
-const CalendarIcon = (props: any) => (
-  <Layout {...props} style={[props.style, styles.iconContainer]}>
-    <AntDesign name="calendar" size={20} />
-  </Layout>
-);
-
-const ForwardIcon = (props: any) => (
-  <Layout {...props} style={[props.style, styles.iconContainer]}>
-    <Icon name="arrow-redo-outline" size={20} />
-  </Layout>
-);
-
-const ReservationScreen: React.FC<Props> = ({ navigation }) => {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+const RoomUser: React.FC<Props> = ({ navigation }) => {
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const fetchReservations = async () => {
+  const fetchRooms = async () => {
     try {
       const userData = await AsyncStorage.getItem("user");
       if (userData) {
         const user = JSON.parse(userData);
         const userId = user._id;
-        const response = await axios.get(`/reservations?user_id=${userId}`);
-        setReservations(response.data.reservation);
+        const response = await axios.get(`/rooms?owner_id=${userId}`);
+        setRooms(response.data.rooms);
       } else {
         console.log("User data not found in AsyncStorage");
       }
     } catch (error) {
-      console.error("Error fetching reservations: ", error);
+      console.error("Error fetching rooms: ", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchReservations();
+    fetchRooms();
   }, []);
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-    fetchReservations();
+    fetchRooms();
   }, []);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${day}/${month}/${year}`;
-  };
 
   if (loading) {
     return (
@@ -117,29 +107,24 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
-  const renderItem = ({ item }: { item: Reservation }) => (
-    <View style={styles.reservationItem}>
+  const renderItem = ({ item }: { item: Room }) => (
+    <View style={styles.roomItem}>
       <MenuItem
         title={(evaProps) => (
           <View style={styles.titleContainer}>
             <Text {...evaProps} style={styles.roomName}>
-              {item.room_id.name}
+              {item.name}
             </Text>
             <Text {...evaProps} style={styles.dateText}>
-              {formatDate(item.createdAt)}
+              {new Date(item.createdAt).toLocaleDateString()}
             </Text>
           </View>
         )}
         accessoryLeft={(props) => (
-          <Image
-            source={{ uri: item.room_id.images[0] }}
-            style={styles.roomImage}
-          />
+          <Image source={{ uri: item.images[0] }} style={styles.roomImage} />
         )}
-        accessoryRight={() => <FontIcon name="angle-right" size={20} />}
-        onPress={() =>
-          navigation.navigate("ReservationDetail", { reservation: item })
-        }
+        accessoryRight={() => <Icon name="angle-right" size={20} />}
+        onPress={() => navigation.navigate("Salle", { roomId: item._id })}
         style={{ backgroundColor: "#F8F8F8",borderRadius:5 }}
       />
     </View>
@@ -147,19 +132,20 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {reservations.length === 0 ? (
-        <View style={styles.noReservations}>
-          <Text category="h6">Aucune reservation</Text>
+      {rooms.length === 0 ? (
+        <View style={styles.noRooms}>
+          <Text category="h6">Aucune salle</Text>
         </View>
       ) : (
         <View style={{ flex: 1 }}>
           <View style={styles.header}>
-            <Text style={{ fontFamily: "Poppins-Bold" }}>
-              Liste des reservations
-            </Text>
+            <Text style={{ fontFamily: "Poppins-Bold" }}>Liste des salles</Text>
+            <Button size="small" onPress={() => navigation.navigate("AddRoom")}>
+              Ajouter une salle
+            </Button>
           </View>
           <FlatList
-            data={reservations}
+            data={rooms}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             refreshControl={
@@ -184,10 +170,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  iconContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
   titleContainer: {
     flex: 1,
     justifyContent: "center",
@@ -205,13 +187,16 @@ const styles = StyleSheet.create({
   header: {
     margin: 15,
     padding: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  noReservations: {
+  noRooms: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  reservationItem: {
+  roomItem: {
     backgroundColor: "#ffffff",
     borderRadius: 8,
     padding: 10,
@@ -227,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReservationScreen;
+export default RoomUser;

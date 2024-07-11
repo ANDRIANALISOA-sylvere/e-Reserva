@@ -4,7 +4,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Material from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ViewStyle } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -13,11 +12,11 @@ import RoomListScreen from "../screens/RoomListScreen";
 import RoomDetailsScreen from "../screens/RoomDetailScreen";
 import FavorisScreen from "../screens/FavorisScreen";
 import ReservationScreen from "../screens/ReservationScreen";
-import NotificationScreen from "../screens/NotificationScreen";
 import ReservationModalScreen from "../screens/ReservationModalScreen";
 import ReservationDetailScreen from "../screens/ReservationDetailScreen";
 import { useTheme } from "@ui-kitten/components";
 import Room from "../screens/Room";
+import RoomUser from "../screens/RoomUser";
 
 interface Reservation {
   _id: string;
@@ -42,9 +41,10 @@ type RootStackParamList = {
   Reserver: undefined;
   Reservation: { roomId: string };
   ReservationDetail: { reservation: Reservation };
-  Notification: undefined;
+  RoomUser: undefined;
   Account: undefined;
   AddRoom: undefined;
+  Salles : undefined
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -93,6 +93,16 @@ const ReservationStack = () => (
       name="ReservationDetail"
       component={ReservationDetailScreen}
       options={{ headerShown: true, title: "Détails de la réservation" }}
+    />
+  </Stack.Navigator>
+);
+
+const SalleStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="RoomUser"
+      component={RoomUser}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="AddRoom"
@@ -177,19 +187,18 @@ export default function MainNavigator() {
         }}
       />
       <Tab.Screen
-        name="Notification"
-        component={NotificationScreen}
+        name="Salles"
+        component={SalleStack}
         options={{
-          tabBarLabel: "Notification",
+          tabBarLabel: "Salles",
           headerShown: false,
           tabBarIcon: ({ color, size, focused }) => (
             <Icon
-              name={focused ? "bell" : "bell-o"}
+              name={focused ? "building" : "building-o"}
               color={color}
               size={size}
             />
           ),
-          tabBarBadge: 3,
           tabBarStyle: { paddingVertical: 5 },
         }}
       />
