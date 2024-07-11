@@ -16,6 +16,7 @@ import {
   Divider,
 } from "@ui-kitten/components";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Material from "react-native-vector-icons/MaterialIcons";
 import ListRoom from "./Tab/ListRoom";
 import PopularRoom from "./Tab/PopularRoom";
 import RecentRoom from "./Tab/RecentRoom";
@@ -129,7 +130,7 @@ const RoomListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           Bonjour, {user ? user.name : "Chargement..."} 👋
         </Text>
         <TouchableOpacity onPress={handleRefreshRooms}>
-          <Icon name="refresh" size={20} color={iconColor} />
+          <Material name="refresh" size={23} color={iconColor} />
         </TouchableOpacity>
       </View>
       <View style={styles.searchContainer}>
