@@ -84,8 +84,6 @@ interface Review {
   rating: number;
 }
 
-const { width: viewportWidth } = Dimensions.get("window");
-
 const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);

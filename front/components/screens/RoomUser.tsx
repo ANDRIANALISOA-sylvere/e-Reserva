@@ -47,18 +47,20 @@ type RootStackParamList = {
   Room: undefined;
   RoomList: undefined;
   Salle: { roomId: string };
+  ReservationRoom: { roomId: string };
   Favoris: undefined;
   Reserver: undefined;
   Reservation: { roomId: string };
   ReservationDetail: { reservation: Reservation };
-  Notification: undefined;
+  RoomUser: undefined;
   Account: undefined;
   AddRoom: undefined;
+  Salles: undefined;
 };
 
 type RoomScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Salle"
+  "ReservationRoom"
 >;
 
 type Props = {
@@ -148,7 +150,9 @@ const RoomUser: React.FC<Props> = ({ navigation }) => {
           <Image source={{ uri: item.images[0] }} style={styles.roomImage} />
         )}
         accessoryRight={() => <Icon name="angle-right" size={20} />}
-        onPress={() => navigation.navigate("Salle", { roomId: item._id })}
+        onPress={() =>
+          navigation.navigate("ReservationRoom", { roomId: item._id })
+        }
         style={{ backgroundColor: "#F8F8F8", borderRadius: 5 }}
       />
     </View>

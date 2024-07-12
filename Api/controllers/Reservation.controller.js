@@ -19,7 +19,6 @@ const AddReservation = async (req, res) => {
       return res.status(400).json("Room not found");
     }
 
-    // Vérifier les réservations existantes pour la même salle et les dates chevauchantes
     const existingReservations = await Reservation.find({
       room_id,
       $or: [
@@ -101,9 +100,29 @@ const GetReservationById = async (req, res) => {
   }
 };
 
+const getReservationsByRoomId = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+
+    const reservations = await Reservation.find({ room_id: roomId })
+      .populate('room_id')
+      .populate('user_id');
+
+    if (!reservations || reservations.length === 0) {
+      return res.status(404).json({ message: "Aucune réservation trouvée pour cette chambre" });
+    }
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des réservations:', error);
+    res.status(500).json({ message: "Erreur serveur lors de la récupération des réservations" });
+  }
+};
+
 module.exports = {
   AddReservation,
   GetReservationByUser,
   GetAllReservation,
   GetReservationById,
+  getReservationsByRoomId
 };

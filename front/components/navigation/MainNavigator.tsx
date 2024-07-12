@@ -17,6 +17,7 @@ import ReservationDetailScreen from "../screens/ReservationDetailScreen";
 import { useTheme } from "@ui-kitten/components";
 import Room from "../screens/Room";
 import RoomUser from "../screens/RoomUser";
+import ReservationOfRoom from "../screens/ReservationOfRoom";
 
 interface Reservation {
   _id: string;
@@ -37,6 +38,7 @@ type RootStackParamList = {
   Room: undefined;
   RoomList: undefined;
   Salle: { roomId: string };
+  ReservationRoom: { roomId: string };
   Favoris: undefined;
   Reserver: undefined;
   Reservation: { roomId: string };
@@ -123,6 +125,18 @@ const SalleStack = () => (
       options={{
         headerShown: true,
         title: "Nouvelle salle",
+        headerTitleStyle: {
+          fontFamily: "Poppins-Bold",
+          fontSize: 18,
+        },
+      }}
+    />
+    <Stack.Screen
+      name="ReservationRoom"
+      component={ReservationOfRoom}
+      options={{
+        headerShown: true,
+        title: "Liste des reservations de salle",
         headerTitleStyle: {
           fontFamily: "Poppins-Bold",
           fontSize: 18,
