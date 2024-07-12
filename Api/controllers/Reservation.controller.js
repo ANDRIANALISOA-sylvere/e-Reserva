@@ -90,7 +90,9 @@ const GetAllReservation = async (req, res) => {
 const GetReservationById = async (req, res) => {
   const id = req.params.id;
   try {
-    const reservation = await Reservation.findById({ _id: id }).populate("room_id user_id");
+    const reservation = await Reservation.findById({ _id: id }).populate(
+      "room_id user_id"
+    );
     res.status(200).json({ reservation: reservation });
   } catch (error) {
     console.error(error);
@@ -105,17 +107,73 @@ const getReservationsByRoomId = async (req, res) => {
     const { roomId } = req.params;
 
     const reservations = await Reservation.find({ room_id: roomId })
-      .populate('room_id')
-      .populate('user_id');
+      .populate("room_id")
+      .populate("user_id");
 
     if (!reservations || reservations.length === 0) {
-      return res.status(404).json({ message: "Aucune réservation trouvée pour cette chambre" });
+      return res
+        .status(404)
+        .json({ message: "Aucune réservation trouvée pour cette chambre" });
     }
 
     res.status(200).json(reservations);
   } catch (error) {
-    console.error('Erreur lors de la récupération des réservations:', error);
-    res.status(500).json({ message: "Erreur serveur lors de la récupération des réservations" });
+    console.error("Erreur lors de la récupération des réservations:", error);
+    res.status(500).json({
+      message: "Erreur serveur lors de la récupération des réservations",
+    });
+  }
+};
+
+const confirmReservation = async (req, res) => {
+  try {
+    const reservationId = req.params.id;
+
+    const updatedReservation = await Reservation.findByIdAndUpdate(
+      reservationId,
+      { reservation_status: "confirmed" },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedReservation) {
+      return res.status(404).json({ message: "Réservation non trouvée" });
+    }
+
+    res.status(200).json({
+      message: "Réservation confirmée avec succès",
+      reservation: updatedReservation,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la confirmation de la réservation",
+      error: error.message,
+    });
+  }
+};
+
+const cancelReservation = async (req, res) => {
+  try {
+    const reservationId = req.params.id;
+
+    const updatedReservation = await Reservation.findByIdAndUpdate(
+      reservationId,
+      { reservation_status: "cancelled" },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedReservation) {
+      return res.status(404).json({ message: "Réservation non trouvée" });
+    }
+
+    res.status(200).json({
+      message: "Réservation annulée avec succès",
+      reservation: updatedReservation,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de l'annulation de la réservation",
+      error: error.message,
+    });
   }
 };
 
@@ -123,6 +181,8 @@ module.exports = {
   AddReservation,
   GetReservationByUser,
   GetAllReservation,
+  confirmReservation,
   GetReservationById,
-  getReservationsByRoomId
+  getReservationsByRoomId,
+  cancelReservation,
 };

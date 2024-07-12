@@ -14,8 +14,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Material from "react-native-vector-icons/MaterialIcons";
 
-const { width: viewportWidth } = Dimensions.get("window");
-
 const ReservationDetailScreen: React.FC = ({ route }: any) => {
   const { reservation } = route.params;
 

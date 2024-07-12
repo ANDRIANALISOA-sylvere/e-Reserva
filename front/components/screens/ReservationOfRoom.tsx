@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
@@ -86,12 +87,46 @@ const ReservationOfRoom: React.FC<RoomDetailProps> = ({
     setRefreshing(false);
   }, [fetchReservations]);
 
-  const handleConfirm = (reservationId: string) => {
-    // Logique pour confirmer la réservation
+  const handleConfirm = async (reservationId: string) => {
+    try {
+      const response = await axios.patch(
+        `/reservations/${reservationId}/confirm`
+      );
+      if (response.status === 200) {
+        setReservations((prevReservations) =>
+          prevReservations.map((reservation) =>
+            reservation._id === reservationId
+              ? { ...reservation, reservation_status: "confirmed" }
+              : reservation
+          )
+        );
+        Alert.alert("Succès", "La réservation a été confirmée");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la confirmation de la réservation:", error);
+      Alert.alert("Erreur", "Impossible de confirmer la réservation");
+    }
   };
 
-  const handleCancel = (reservationId: string) => {
-    // Logique pour annuler la réservation
+  const handleCancel = async (reservationId: string) => {
+    try {
+      const response = await axios.patch(
+        `/reservations/${reservationId}/cancel`
+      );
+      if (response.status === 200) {
+        setReservations((prevReservations) =>
+          prevReservations.map((reservation) =>
+            reservation._id === reservationId
+              ? { ...reservation, reservation_status: "cancelled" }
+              : reservation
+          )
+        );
+        Alert.alert("Succès", "La réservation a été annulée");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'annulation de la réservation:", error);
+      Alert.alert("Erreur", "Impossible d'annuler la réservation");
+    }
   };
 
   const getStatusInFrench = (status: string) => {
@@ -143,20 +178,24 @@ const ReservationOfRoom: React.FC<RoomDetailProps> = ({
                 Statut: {getStatusInFrench(reservation.reservation_status)}
               </Text>
               <View style={styles.buttonContainer}>
-                <Button
-                  size="filled"
-                  status="success"
-                  onPress={() => handleConfirm(reservation._id)}
-                >
-                  Confirmer
-                </Button>
-                <Button
-                  size="filled"
-                  status="danger"
-                  onPress={() => handleCancel(reservation._id)}
-                >
-                  Annuler
-                </Button>
+                {reservation.reservation_status === "pending" && (
+                  <>
+                    <Button
+                      size="filled"
+                      status="success"
+                      onPress={() => handleConfirm(reservation._id)}
+                    >
+                      Confirmer
+                    </Button>
+                    <Button
+                      size="filled"
+                      status="danger"
+                      onPress={() => handleCancel(reservation._id)}
+                    >
+                      Annuler
+                    </Button>
+                  </>
+                )}
               </View>
             </View>
           </View>
