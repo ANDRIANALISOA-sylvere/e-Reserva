@@ -117,6 +117,38 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
+  const renderStatusBadge = (status: string) => {
+    let backgroundColor, textColor, displayText;
+    switch (status) {
+      case "pending":
+        backgroundColor = "#FFF3E0";
+        textColor = "#FF9800";
+        displayText = "En attente";
+        break;
+      case "confirmed":
+        backgroundColor = "#E8F5E9";
+        textColor = "#4CAF50";
+        displayText = "Confirmée";
+        break;
+      case "cancelled":
+        backgroundColor = "#FFEBEE";
+        textColor = "#F44336";
+        displayText = "Annulée";
+        break;
+      default:
+        backgroundColor = "#F5F5F5";
+        textColor = "#9E9E9E";
+        displayText = "Inconnu";
+    }
+    return (
+      <View style={[styles.statusBadge, { backgroundColor }]}>
+        <Text style={[styles.statusBadgeText, { color: textColor }]}>
+          {displayText}
+        </Text>
+      </View>
+    );
+  };
+
   const renderItem = ({ item }: { item: Reservation }) => (
     <View style={styles.reservationItem}>
       <MenuItem
@@ -125,9 +157,12 @@ const ReservationScreen: React.FC<Props> = ({ navigation }) => {
             <Text {...evaProps} style={styles.roomName}>
               {item.room_id.name}
             </Text>
-            <Text {...evaProps} style={styles.dateText}>
-              {formatDate(item.createdAt)}
-            </Text>
+            <View style={styles.dateStatusContainer}>
+              <Text {...evaProps} style={styles.dateText}>
+                {formatDate(item.createdAt)}
+              </Text>
+              {renderStatusBadge(item.reservation_status)}
+            </View>
           </View>
         )}
         accessoryLeft={(props) => (
@@ -192,12 +227,11 @@ const styles = StyleSheet.create({
   },
   roomName: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
   dateText: {
     fontSize: 14,
     color: "#888",
-    marginTop: 4,
   },
   header: {
     margin: 15,
@@ -221,6 +255,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 300,
+  },
+  dateStatusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginLeft: 8,
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontFamily: "Poppins-Bold",
   },
 });
 

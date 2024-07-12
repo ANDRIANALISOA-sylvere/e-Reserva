@@ -20,28 +20,32 @@ const ReservationDetailScreen: React.FC = ({ route }: any) => {
   const { reservation } = route.params;
 
   const renderStatusBadge = (status: string) => {
-    let backgroundColor, textColor;
+    let backgroundColor, textColor, displayText;
     switch (status) {
       case "pending":
         backgroundColor = "#FFF3E0";
         textColor = "#FF9800";
+        displayText = "En attente";
         break;
       case "confirmed":
         backgroundColor = "#E8F5E9";
         textColor = "#4CAF50";
+        displayText = "Confirmée";
         break;
       case "cancelled":
         backgroundColor = "#FFEBEE";
         textColor = "#F44336";
+        displayText = "Annulée";
         break;
       default:
         backgroundColor = "#F5F5F5";
         textColor = "#9E9E9E";
+        displayText = "Inconnu";
     }
     return (
       <View style={[styles.statusBadge, { backgroundColor }]}>
         <Text style={[styles.statusBadgeText, { color: textColor }]}>
-          {status}
+          {displayText}
         </Text>
       </View>
     );
