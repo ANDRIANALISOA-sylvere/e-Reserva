@@ -32,6 +32,7 @@ interface Reservation {
 interface Room {
   _id: string;
   name: string;
+  reservationCount: number;
   owner_id: string;
   max_capacity: number;
   price: number;
@@ -107,6 +108,26 @@ const RoomUser: React.FC<Props> = ({ navigation }) => {
     );
   }
 
+  const renderReservationBadge = (count: number) => {
+    let backgroundColor, textColor;
+    let text = `${count} réservation${count > 1 ? "s" : ""}`;
+
+    if (count === 0) {
+      backgroundColor = "#FFEBEE";
+      textColor = "#F44336";
+      text = "Aucune réservation";
+    } else {
+      backgroundColor = "#E8F5E9";
+      textColor = "#4CAF50";
+    }
+
+    return (
+      <View style={[styles.badge, { backgroundColor }]}>
+        <Text style={[styles.badgeText, { color: textColor }]}>{text}</Text>
+      </View>
+    );
+  };
+
   const renderItem = ({ item }: { item: Room }) => (
     <View style={styles.roomItem}>
       <MenuItem
@@ -115,9 +136,12 @@ const RoomUser: React.FC<Props> = ({ navigation }) => {
             <Text {...evaProps} style={styles.roomName}>
               {item.name}
             </Text>
-            <Text {...evaProps} style={styles.dateText}>
-              {new Date(item.createdAt).toLocaleDateString()}
-            </Text>
+            <View style={styles.dateReservationContainer}>
+              <Text {...evaProps} style={styles.dateText}>
+                {new Date(item.createdAt).toLocaleDateString()}
+              </Text>
+              {renderReservationBadge(item.reservationCount)}
+            </View>
           </View>
         )}
         accessoryLeft={(props) => (
@@ -174,12 +198,11 @@ const styles = StyleSheet.create({
   },
   roomName: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
   dateText: {
     fontSize: 14,
     color: "#888",
-    marginTop: 4,
   },
   header: {
     margin: 15,
@@ -211,6 +234,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 300,
+  },
+  dateReservationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginLeft: 8,
+  },
+  badgeText: {
+    fontSize: 10,
+    fontFamily: "Poppins-Bold",
   },
 });
 

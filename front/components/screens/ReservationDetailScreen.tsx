@@ -6,10 +6,13 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  Pressable,
 } from "react-native";
-import { Layout, Text } from "@ui-kitten/components";
+import { Layout, Text, Divider, Button } from "@ui-kitten/components";
 import Swiper from "react-native-swiper";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Material from "react-native-vector-icons/MaterialIcons";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -17,121 +20,102 @@ const ReservationDetailScreen: React.FC = ({ route }: any) => {
   const { reservation } = route.params;
 
   const renderStatusBadge = (status: string) => {
-    let color;
+    let backgroundColor, textColor;
     switch (status) {
       case "pending":
-        color = "#FFA500";
+        backgroundColor = "#FFF3E0";
+        textColor = "#FF9800";
         break;
       case "confirmed":
-        color = "#008000";
+        backgroundColor = "#E8F5E9";
+        textColor = "#4CAF50";
         break;
       case "cancelled":
-        color = "#FF0000";
+        backgroundColor = "#FFEBEE";
+        textColor = "#F44336";
         break;
       default:
-        color = "#808080";
+        backgroundColor = "#F5F5F5";
+        textColor = "#9E9E9E";
     }
     return (
-      <View style={[styles.badge, { backgroundColor: color }]}>
-        <Text style={styles.badgeText}>{status}</Text>
+      <View style={[styles.statusBadge, { backgroundColor }]}>
+        <Text style={[styles.statusBadgeText, { color: textColor }]}>
+          {status}
+        </Text>
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Layout style={styles.detailContainer}>
-          <View style={styles.imageContainer}>
-            {reservation.room_id.images.length > 1 ? (
-              <Swiper
-                style={styles.wrapper}
-                showsButtons={true}
-                nextButton={<Text style={styles.buttonText}>›</Text>}
-                prevButton={<Text style={styles.buttonText}>‹</Text>}
-              >
-                {reservation.room_id.images.map(
-                  (image: string, index: number) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image }}
-                      style={styles.image}
-                    />
-                  )
-                )}
-              </Swiper>
-            ) : (
-              <Image
-                source={{ uri: reservation.room_id.images[0] }}
-                style={styles.image}
-              />
-            )}
+    <ScrollView style={styles.container}>
+      <View style={styles.contentContainer}>
+        {reservation.room_id.images.length > 1 ? (
+          <Swiper
+            style={styles.wrapper}
+            showsButtons={true}
+            nextButton={<Text style={styles.buttonText}>›</Text>}
+            prevButton={<Text style={styles.buttonText}>‹</Text>}
+          >
+            {reservation.room_id.images.map((image: string, index: number) => (
+              <Image key={index} source={{ uri: image }} style={styles.image} />
+            ))}
+          </Swiper>
+        ) : (
+          <Image
+            source={{ uri: reservation.room_id.images[0] }}
+            style={styles.image}
+          />
+        )}
+        <Pressable style={styles.favIcon}>
+          <Ionicons name="heart-outline" size={20} color="#fff" />
+        </Pressable>
+        <Text style={styles.name}>{reservation.room_id.name}</Text>
+        <View style={styles.infoContainer}>
+          <View style={styles.infoItem}>
+            <Material name="event" size={24} color="#666" />
+            <Text style={styles.infoText}>
+              {new Date(reservation.date_debut).toLocaleDateString()} -{" "}
+              {new Date(reservation.end_date).toLocaleDateString()}
+            </Text>
           </View>
-          <Text category="h5" style={styles.title}>
-            {reservation.room_id.name}
-          </Text>
-          <Text category="s1" style={styles.infoText}>
-            <FontAwesome name="calendar" size={16} /> Date de début:{" "}
-            {new Date(reservation.date_debut).toLocaleDateString()}
-          </Text>
-          <Text category="s1" style={styles.infoText}>
-            <FontAwesome name="calendar" size={16} /> Date de fin:{" "}
-            {new Date(reservation.end_date).toLocaleDateString()}
-          </Text>
-          <Text category="s1" style={styles.infoText}>
-            <FontAwesome name="info-circle" size={16} /> Status:{" "}
+          <View style={styles.infoItem}>
+            <FontAwesome name="info-circle" size={20} color="#666" />
             {renderStatusBadge(reservation.reservation_status)}
-          </Text>
-          <Text category="s1" style={styles.infoText}>
-            <FontAwesome name="money" size={16} /> Prix:{" "}
-            {reservation.room_id.price} Ar
-          </Text>
-          <Text category="c1" style={styles.infoText}>
-            <FontAwesome name="clock-o" size={16} /> Créé le:{" "}
-            {new Date(reservation.createdAt).toLocaleDateString()}
-          </Text>
-          <Text category="c1" style={styles.infoText}>
-            <FontAwesome name="clock-o" size={16} /> Mis à jour le:{" "}
-            {new Date(reservation.updatedAt).toLocaleDateString()}
-          </Text>
-          <Text category="h6" style={styles.sectionTitle}>
-            Description
-          </Text>
-          <Text category="p1" style={styles.description}>
-            {reservation.room_id.description}
-          </Text>
-          <Text category="h6" style={styles.sectionTitle}>
-            Équipements
-          </Text>
-          <View style={styles.equipmentsContainer}>
-            {reservation.room_id.equipments.map(
-              (equipment: string, index: number) => (
-                <View key={index} style={styles.badge}>
-                  <Text style={styles.badgeText}>{equipment}</Text>
-                </View>
-              )
-            )}
           </View>
-        </Layout>
-      </ScrollView>
-    </SafeAreaView>
+        </View>
+        <Divider style={styles.divider} />
+        <View style={styles.priceBadge}>
+          <Text style={styles.priceText}>
+            {reservation.room_id.price} Ar / heure
+          </Text>
+        </View>
+        <Text style={styles.sectionTitle}>Description</Text>
+        <Text style={styles.description}>
+          {reservation.room_id.description}
+        </Text>
+        <Text style={styles.sectionTitle}>Équipements</Text>
+        <View style={styles.equipmentsContainer}>
+          {reservation.room_id.equipments.map(
+            (equipment: string, index: number) => (
+              <View key={index} style={styles.equipmentBadge}>
+                <Text style={styles.equipmentText}>{equipment}</Text>
+              </View>
+            )
+          )}
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
   },
-  scrollContainer: {
+  contentContainer: {
     padding: 10,
-  },
-  detailContainer: {
-    padding: 15,
-  },
-  imageContainer: {
-    height: 250,
-    marginBottom: 16,
   },
   wrapper: {
     height: 250,
@@ -139,55 +123,114 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 250,
-    borderRadius: 10,
+    borderRadius: 5,
+  },
+  favIcon: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 50,
+    padding: 4,
   },
   buttonText: {
     color: "white",
     fontSize: 50,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
-  title: {
+  name: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
+    marginBottom: 15,
+    marginTop: 20,
+    fontFamily: "Poppins-Bold",
   },
-  infoText: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: "#555",
+  infoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  infoItem: {
     flexDirection: "row",
     alignItems: "center",
   },
+  infoText: {
+    fontSize: 16,
+    marginLeft: 8,
+    color: "#666",
+    fontFamily: "Poppins",
+  },
+  divider: {
+    backgroundColor: "#e0e0e0",
+    marginVertical: 15,
+  },
+  priceBadge: {
+    backgroundColor: "#E8F5E9",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    alignSelf: "flex-start",
+    marginTop: 5,
+  },
+  priceText: {
+    color: "#2E7D32",
+    fontFamily: "Poppins-Bold",
+    fontSize: 12,
+  },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
-    color: "#333",
+    fontFamily: "Poppins-Bold",
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
     textAlign: "justify",
-    color: "#666",
+    opacity: 0.7,
+    fontFamily: "Poppins",
   },
   equipmentsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 20,
   },
+  equipmentBadge: {
+    backgroundColor: "#E3F2FD",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 5,
+    marginBottom: 5,
+  },
+  equipmentText: {
+    color: "#1565C0",
+    fontFamily: "Poppins-Bold",
+    fontSize: 12,
+  },
+  modifyButton: {
+    marginTop: 20,
+    margin: 10,
+  },
   badge: {
-    backgroundColor: "#333",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 5,
-    marginRight: 8,
-    marginBottom: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginLeft: 8,
   },
   badgeText: {
     color: "white",
-    fontSize: 14,
+    fontSize: 12,
+    fontFamily: "Poppins-Bold",
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 15,
+    marginLeft: 8,
+  },
+  statusBadgeText: {
+    fontSize: 12,
+    fontFamily: "Poppins-Bold",
   },
 });
 
