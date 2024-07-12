@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, ScrollView } from "react-native";
+import {
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { Button, Input, Text, Layout } from "@ui-kitten/components";
 import * as ImagePicker from "expo-image-picker";
 import axios from "../../api/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 interface RoomData {
   name: string;
@@ -113,10 +120,8 @@ const AddRoom: React.FC = () => {
   };
 
   return (
-    <ScrollView>
-      <Layout style={{ flex: 1, padding: 16 }}>
-        <Text category="h1">Nouvelle salle pour un spectacle</Text>
-
+    <ScrollView style={{ backgroundColor: "#fff" }}>
+      <View style={{ flex: 1, padding: 16 }}>
         <Input
           placeholder="Nom de la salle"
           value={roomData.name}
@@ -152,26 +157,67 @@ const AddRoom: React.FC = () => {
           style={{ marginVertical: 8 }}
         />
 
-        <Button onPress={pickImage} style={{ marginVertical: 8 }}>
-          Ajouter des images
-        </Button>
-
-        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {images.map((image, index) => (
-            <Image
-              key={index}
-              source={{ uri: image }}
-              style={{ width: 100, height: 100, margin: 5 }}
-            />
-          ))}
-        </View>
+        <TouchableOpacity
+          onPress={pickImage}
+          style={styles.imagePickerContainer}
+        >
+          {images.length === 0 ? (
+            <>
+              <Icon name="cloud-upload" size={40} color="#888" />
+              <Text style={styles.imagePickerText}>
+                Choisir des fichiers images
+              </Text>
+            </>
+          ) : (
+            <View style={styles.imageGrid}>
+              {images.map((image, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: image }}
+                  style={styles.thumbnailImage}
+                />
+              ))}
+            </View>
+          )}
+        </TouchableOpacity>
 
         <Button onPress={handleSubmit} style={{ marginVertical: 16 }}>
           Ajouter la salle
         </Button>
-      </Layout>
+      </View>
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  imagePickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderStyle: "dashed",
+    borderRadius: 4,
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 8,
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
+    minHeight: 150,
+  },
+  imagePickerText: {
+    color: "#888",
+    marginTop: 10,
+  },
+  imageGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    fontFamily: "Poppins",
+  },
+  thumbnailImage: {
+    width: 80,
+    height: 80,
+    margin: 5,
+    borderRadius: 4,
+  },
+});
 
 export default AddRoom;
