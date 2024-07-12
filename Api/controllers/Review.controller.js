@@ -25,7 +25,9 @@ const AddReview = async (req, res) => {
 
     await review.save();
 
-    const populatedReview = await ReviewModel.findById(review._id).populate('user_id');
+    const populatedReview = await ReviewModel.findById(review._id).populate(
+      "user_id"
+    );
     res.status(200).json({ review: populatedReview });
   } catch (error) {
     console.log(error.message);
@@ -36,16 +38,25 @@ const AddReview = async (req, res) => {
 const ReviewOfRoom = async (req, res) => {
   const { room_id } = req.query;
   try {
-    const room = await RoomsModel.findById({ _id: room_id });
+    const room = await RoomsModel.findById(room_id);
     if (!room) {
       return res.status(400).json("Room not found");
     }
 
-    const review = await ReviewModel.find({ room_id: room_id }).populate("user_id");
-    res.status(200).json({ review: review });
+    const reviews = await ReviewModel.find({ room_id: room_id }).populate("user_id");
+    const reviewCount = await ReviewModel.countDocuments({ room_id: room_id });
+
+    const ratingSum = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = reviewCount > 0 ? ratingSum / reviewCount : 0;
+
+    res.status(200).json({ 
+      reviews: reviews,
+      reviewCount: reviewCount,
+      averageRating: Number(averageRating.toFixed(1))
+    });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: "Failed to fetch review" });
+    res.status(500).json({ message: "Failed to fetch reviews" });
   }
 };
 

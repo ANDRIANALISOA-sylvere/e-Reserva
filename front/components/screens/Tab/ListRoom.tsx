@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import axios from "../../../api/axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from "react-native-vector-icons/MaterialIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface Room {
   _id: string;
@@ -22,6 +23,8 @@ interface Room {
   description: string;
   equipments: string[];
   images: string[];
+  averageRating?: number;
+  reviewCount?: number;
 }
 
 interface Props {
@@ -37,7 +40,19 @@ const ListRoom: React.FC<Props> = ({ navigation, refreshKey }) => {
     const fetchRooms = async () => {
       try {
         const response = await axios.get<{ rooms: Room[] }>("/rooms/all");
-        setRooms(response.data.rooms);
+        const roomsWithReviews = await Promise.all(
+          response.data.rooms.map(async (room) => {
+            const reviewResponse = await axios.get(
+              `/reviews?room_id=${room._id}`
+            );
+            return {
+              ...room,
+              averageRating: reviewResponse.data.averageRating,
+              reviewCount: reviewResponse.data.reviewCount,
+            };
+          })
+        );
+        setRooms(roomsWithReviews);
       } catch (error) {
         console.log("Error fetching rooms:", error);
       }
@@ -71,6 +86,13 @@ const ListRoom: React.FC<Props> = ({ navigation, refreshKey }) => {
             />
             <View style={styles.body}>
               <Text style={styles.name}>{room.name}</Text>
+              <View style={styles.ratingContainer}>
+                <Icon name="star" size={16} color="orange" />
+                <Text style={styles.ratingText}>
+                  {room.averageRating?.toFixed(1) || "N/A"} (
+                  {room.reviewCount || 0})
+                </Text>
+              </View>
               <Text style={styles.capacity}>
                 Capacité: {room.max_capacity} pers
               </Text>
@@ -154,6 +176,17 @@ const styles = StyleSheet.create({
     color: "#2E7D32",
     fontFamily: "Poppins-Bold",
     fontSize: 12,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  ratingText: {
+    marginLeft: 5,
+    fontSize: 12,
+    color: "#666",
+    fontFamily: "Poppins",
   },
 });
 

@@ -92,6 +92,8 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [userRating, setUserRating] = useState(0);
   const [userComment, setUserComment] = useState("");
   const [userId, setUserId] = useState("");
+  const [reviewCount, setReviewCount] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
   const roomId = route.params.roomId;
   console.log("Room ID:", roomId);
   const theme = useTheme();
@@ -109,10 +111,14 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
 
     const fetchRoomReviews = async () => {
       try {
-        const response = await axios.get<{ review: Review[] }>(
-          `/reviews?room_id=${roomId}`
-        );
-        setReviews(response.data.review);
+        const response = await axios.get<{
+          reviews: Review[];
+          reviewCount: number;
+          averageRating: number;
+        }>(`/reviews?room_id=${roomId}`);
+        setReviews(response.data.reviews);
+        setReviewCount(response.data.reviewCount);
+        setAverageRating(response.data.averageRating);
       } catch (error) {
         console.log("Error fetching room reviews:", error);
       }
@@ -203,6 +209,13 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
           <Ionicons name="heart-outline" size={20} color="#fff" />
         </Pressable>
         <Text style={styles.name}>{room.name}</Text>
+        <View style={styles.ratingOverview}>
+          <Text style={styles.averageRating}>{averageRating.toFixed(1)}</Text>
+          <View style={styles.starsContainer}>
+            {renderRatingStars(averageRating)}
+          </View>
+          <Text style={styles.reviewCount}>({reviewCount} avis)</Text>
+        </View>
         <View style={styles.infoContainer}>
           <View style={styles.infoItem}>
             <Material name="people" size={24} color={iconColor} />
@@ -483,6 +496,23 @@ const styles = StyleSheet.create({
   },
   submitReviewButton: {
     marginTop: 10,
+  },
+  ratingOverview: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  averageRating: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  starsContainer: {
+    flexDirection: "row",
+  },
+  reviewCount: {
+    marginLeft: 10,
+    color: "#666",
   },
 });
 
