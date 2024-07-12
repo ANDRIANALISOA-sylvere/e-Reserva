@@ -1,14 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Alert, Image } from "react-native";
 import axios from "../../api/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button, Input, Text, useTheme } from "@ui-kitten/components";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const theme = useTheme();
+
+  const [loaded, error] = useFonts({
+    Poppins: require("../../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
 
   const handleLogin = async () => {
     if (!email && !password) {
