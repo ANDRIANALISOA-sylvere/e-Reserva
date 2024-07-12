@@ -24,7 +24,9 @@ const AddReview = async (req, res) => {
     });
 
     await review.save();
-    res.status(200).json({ review: review });
+
+    const populatedReview = await ReviewModel.findById(review._id).populate('user_id');
+    res.status(200).json({ review: populatedReview });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Failed to add review" });

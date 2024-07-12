@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import axios from "../../../api/axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface Room {
   _id: string;

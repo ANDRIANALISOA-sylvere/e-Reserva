@@ -16,6 +16,8 @@ import { Button, Divider, useTheme } from "@ui-kitten/components";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import Swiper from "react-native-swiper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TextInput } from "react-native";
 
 interface Reservation {
   _id: string;
@@ -87,6 +89,9 @@ const { width: viewportWidth } = Dimensions.get("window");
 const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [userRating, setUserRating] = useState(0);
+  const [userComment, setUserComment] = useState("");
+  const [userId, setUserId] = useState("");
   const roomId = route.params.roomId;
   console.log("Room ID:", roomId);
   const theme = useTheme();
@@ -116,6 +121,43 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
     fetchRoomDetails();
     fetchRoomReviews();
   }, [roomId]);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const userString = await AsyncStorage.getItem("user");
+      if (userString) {
+        const user = JSON.parse(userString);
+        setUserId(user._id);
+      }
+    };
+    fetchUserId();
+  }, []);
+
+  const handleRatingPress = (rating: number) => {
+    setUserRating(rating);
+  };
+
+  const submitReview = async () => {
+    if (userRating === 0) {
+      alert("Veuillez donner une note avant de soumettre.");
+      return;
+    }
+    try {
+      const response = await axios.post("/reviews", {
+        room_id: roomId,
+        user_id: userId,
+        rating: userRating,
+        comment: userComment,
+      });
+      setReviews([...reviews, response.data.review]);
+      setUserRating(0);
+      setUserComment("");
+      alert("Avis ajouté avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'avis:", error);
+      alert("Une erreur est survenue lors de l'ajout de l'avis.");
+    }
+  };
 
   const renderRatingStars = (rating: number) => {
     const stars = [];
@@ -189,6 +231,20 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
             </View>
           </>
         )}
+        <Button
+          style={styles.reserveButton}
+          onPress={() => navigation.navigate("Reservation", { roomId: roomId })}
+          accessoryLeft={(props) => (
+            <Ionicons
+              {...props}
+              color="white"
+              size={20}
+              name="checkmark-circle"
+            />
+          )}
+        >
+          Réserver cette salle
+        </Button>
         <Text style={styles.sectionTitle}>Avis</Text>
         {reviews.length > 0 ? (
           <View>
@@ -214,20 +270,42 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
           <Text style={styles.noReviews}>Aucun avis pour cette salle.</Text>
         )}
       </View>
-      <Button
-        style={styles.reserveButton}
-        onPress={() => navigation.navigate("Reservation", { roomId: roomId })}
-        accessoryLeft={(props) => (
-          <Ionicons
-            {...props}
-            color="white"
-            size={20}
-            name="checkmark-circle"
-          />
-        )}
-      >
-        Réserver
-      </Button>
+      <View style={styles.addReviewContainer}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={styles.sectionTitle}>Ajouter un avis</Text>
+          <View style={styles.ratingContainer}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Pressable key={star} onPress={() => handleRatingPress(star)}>
+                <Ionicons
+                  name={star <= userRating ? "star" : "star-outline"}
+                  size={20}
+                  color={star <= userRating ? "orange" : iconColor}
+                />
+              </Pressable>
+            ))}
+          </View>
+        </View>
+        <TextInput
+          style={styles.commentInput}
+          placeholder="Écrivez votre commentaire ici"
+          value={userComment}
+          onChangeText={setUserComment}
+          multiline
+        />
+        <Button
+          style={styles.submitReviewButton}
+          onPress={submitReview}
+          status="success"
+        >
+          Soumettre l'avis
+        </Button>
+      </View>
     </ScrollView>
   );
 };
@@ -265,7 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 15,
     marginTop: 20,
-    fontFamily:"Poppins-Bold"
+    fontFamily: "Poppins-Bold",
   },
   infoContainer: {
     flexDirection: "row",
@@ -280,7 +358,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
     color: "#666",
-    fontFamily:"Poppins"
+    fontFamily: "Poppins",
   },
   divider: {
     backgroundColor: "#e0e0e0",
@@ -303,7 +381,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 20,
     marginBottom: 10,
-    fontFamily:"Poppins-Bold"
+    fontFamily: "Poppins-Bold",
   },
   description: {
     fontSize: 16,
@@ -340,11 +418,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flex: 1,
   },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
   rating: {
     fontSize: 14,
     marginLeft: 4,
@@ -353,7 +426,6 @@ const styles = StyleSheet.create({
   comment: {
     fontSize: 14,
     color: "#555",
-    opacity: 0.6,
   },
   noReviews: {
     fontSize: 16,
@@ -386,6 +458,31 @@ const styles = StyleSheet.create({
     color: "#1565C0",
     fontFamily: "Poppins-Bold",
     fontSize: 12,
+  },
+  addReviewContainer: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 15,
+    gap: 10,
+  },
+  commentInput: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    padding: 10,
+    minHeight: 100,
+    textAlignVertical: "top",
+    marginBottom: 15,
+  },
+  submitReviewButton: {
+    marginTop: 10,
   },
 });
 
