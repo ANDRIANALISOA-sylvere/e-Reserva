@@ -90,6 +90,7 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
   const [userRating, setUserRating] = useState(0);
   const [userComment, setUserComment] = useState("");
   const [userId, setUserId] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
   const [reviewCount, setReviewCount] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const roomId = route.params.roomId;
@@ -121,10 +122,25 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
         console.log("Error fetching room reviews:", error);
       }
     };
+    const fetchFavoriteStatus = async () => {
+      try {
+        const response = await axios.get(`/check/${userId}/${roomId}`);
+        setIsFavorite(response.data.estFavori);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la vérification du statut favori:",
+          error
+        );
+      }
+    };
+
+    if (userId) {
+      fetchFavoriteStatus();
+    }
 
     fetchRoomDetails();
     fetchRoomReviews();
-  }, [roomId]);
+  }, [roomId, userId]);
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -136,6 +152,21 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
     };
     fetchUserId();
   }, []);
+
+  const toggleFavorite = async () => {
+    try {
+      const newFavoriteStatus = !isFavorite;
+      await axios.post("/update", {
+        userId: userId,
+        roomId: roomId,
+        isFavoris: newFavoriteStatus,
+      });
+      setIsFavorite(newFavoriteStatus);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du favori:", error);
+      alert("Une erreur est survenue lors de la mise à jour du favori.");
+    }
+  };
 
   const handleRatingPress = (rating: number) => {
     setUserRating(rating);
@@ -203,8 +234,12 @@ const RoomDetailScreen: React.FC<RoomDetailProps> = ({ route, navigation }) => {
         ) : (
           <Image source={{ uri: room.images[0] }} style={styles.image} />
         )}
-        <Pressable style={styles.favIcon}>
-          <Ionicons name="heart-outline" size={20} color="#fff" />
+        <Pressable style={styles.favIcon} onPress={toggleFavorite}>
+          <Ionicons
+            name={isFavorite ? "heart" : "heart-outline"}
+            size={20}
+            color={isFavorite ? "red" : "#fff"}
+          />
         </Pressable>
         <Text style={styles.name}>{room.name}</Text>
         <View style={styles.ratingOverview}>
